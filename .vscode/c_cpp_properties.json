@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "win32_debug",
+            "includePath": [
+                "${workspaceFolder}/src/**"
+            ],
+            "defines": [
+                "E_DEBUG_BUILD"
+            ],
+            "compilerPath": "cl.exe",
+            "cppStandard": "c++20",
+            "intelliSenseMode": "windows-msvc-x64"
+        }
+    ],
+    "version": 4
+}
