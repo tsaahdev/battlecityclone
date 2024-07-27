@@ -7,7 +7,40 @@ namespace base::opengl {
 const i32 GL_COLOR_BUFFER_BIT = 0x00004000;
 const i32 GL_MAJOR_VERSION = 0x821b;
 const i32 GL_MINOR_VERSION = 0x821c;
+const i32 GL_VENDOR = 0x1f00;
+const i32 GL_RENDERER = 0x1f01;
 const i32 GL_VERSION = 0x1f02;
+const i32 GL_SHADING_LANGUAGE_VERSION = 0x8b8c;
+
+const i32 GL_DEBUG_SEVERITY_NOTIFICATION = 0x826b;
+const i32 GL_DEBUG_SOURCE_API = 0x8246;
+const i32 GL_DEBUG_SOURCE_WINDOW_SYSTEM = 0x8247;
+const i32 GL_DEBUG_SOURCE_SHADER_COMPILER = 0x8248;
+const i32 GL_DEBUG_SOURCE_THIRD_PARTY = 0x8249;
+const i32 GL_DEBUG_SOURCE_APPLICATION = 0x824a;
+const i32 GL_DEBUG_SOURCE_OTHER = 0x824b;
+const i32 GL_DEBUG_TYPE_ERROR = 0x824c;
+const i32 GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR = 0x824d;
+const i32 GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR = 0x824e;
+const i32 GL_DEBUG_TYPE_PORTABILITY = 0x824f;
+const i32 GL_DEBUG_TYPE_PERFORMANCE = 0x8250;
+const i32 GL_DEBUG_TYPE_OTHER = 0x8251;
+const i32 GL_DEBUG_OUTPUT = 0x92e0;
+
+const i32 GL_VERTEX_SHADER = 0x8b31;
+const i32 GL_FRAGMENT_SHADER = 0x8b30;
+const i32 GL_COMPILE_STATUS = 0x8b81;
+const i32 GL_LINK_STATUS = 0x8b82;
+
+const i32 GL_ARRAY_BUFFER = 0x8892;
+const i32 GL_STATIC_DRAW = 0x88e4;
+
+const i32 GL_FLOAT = 0x1406;
+const i32 GL_FALSE = 0;
+
+const i32 GL_TRIANGLE_FAN = 0x0006;
+
+
 
 static void (__stdcall* glClear)(u32){ nullptr };
 static void (__stdcall* glClearColor)(f32, f32, f32, f32){ nullptr };
@@ -27,13 +60,13 @@ static void (__stdcall* glDeleteBuffers)(i32, const u32*){ nullptr };
 static void (__stdcall* glVertexAttribPointer)(u32, i32, u32, b8, i32, const void*){ nullptr };
 static void (__stdcall* glEnableVertexAttribArray)(u32){ nullptr };
 static void (__stdcall* glDisableVertexAttribArray)(u32){ nullptr };
-static void (__stdcall* glCreateShader)(u32){ nullptr };
+static u32 (__stdcall* glCreateShader)(u32){ nullptr };
 static void (__stdcall* glShaderSource)(u32, i32, const c8**, const i32*){ nullptr };
 static void (__stdcall* glCompileShader)(u32){ nullptr };
 static void (__stdcall* glGetShaderiv)(u32, u32, i32*){ nullptr };
 static void (__stdcall* glGetShaderInfoLog)(u32, i32, i32*, c8*){ nullptr };
 static void (__stdcall* glDeleteShader)(u32){ nullptr };
-static void (__stdcall* glCreateProgram)(){ nullptr };
+static u32 (__stdcall* glCreateProgram)(){ nullptr };
 static void (__stdcall* glAttachShader)(u32, u32){ nullptr };
 static void (__stdcall* glLinkProgram)(u32){ nullptr };
 static void (__stdcall* glGetProgramiv)(u32, u32, i32*){ nullptr };

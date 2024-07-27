@@ -4,9 +4,18 @@
 
 #include "win32_opengl.h"
 
+// https://stackoverflow.com/questions/68469954/how-to-choose-specific-gpu-when-create-opengl-context
+extern "C" __declspec(dllexport) ::DWORD NvOptimusEnablement{ 1 };
+extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance{ 1 };
+
 using namespace base;
 
+#if defined(E_DEBUG_BUILD)
+i32 main() {
+    const auto hInstance = ::GetModuleHandleA(nullptr);
+#else
 i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLine, i32 nCmdShow) {
+#endif
     static const ::WNDCLASSEXA wc{
         .cbSize = sizeof(::WNDCLASSEXA),
         .style = CS_HREDRAW | CS_VREDRAW,
@@ -26,10 +35,11 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
     );
     if (hwnd == nullptr) { return -1; }
 
-
     if (!opengl::init(hInstance, hwnd)) { return -1; }
 
-    ::ShowWindow(hwnd, nCmdShow);
+    opengl::wip_test_init();
+
+    ::ShowWindow(hwnd, SW_SHOW);
 
     while (true) {
         ::MSG msg{};
@@ -38,6 +48,7 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
             ::DispatchMessageA(&msg);
         }
         opengl::beginFrame();
+        opengl::endFrame();
     }
 
     return 0;

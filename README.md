@@ -9,3 +9,19 @@ A Battlecity game clone
 - Use only OpenGL.
 
 Thats it folks!
+
+- [x] setup environment
+- [x] open window
+- [x] opengl initialization
+- [x] simple logger
+- [x] opengl debug callback
+- [x] load shaders
+- [x] render quad
+- [x] file reader
+- [ ] png load
+- [ ] textured quad
+- [ ] a map
+- [ ] basic keyboard input
+- [ ] basic control a tank
+- [ ] animations
+- [ ] more...

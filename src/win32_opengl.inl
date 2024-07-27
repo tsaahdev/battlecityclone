@@ -315,11 +315,11 @@ inline b8 initWgl() {
             else if (currentChar == ' ') { buffer[pi] = '\n'; }
             else { buffer[pi] = currentChar; }
         }
-        ::OutputDebugStringA(buffer);
+        E_PRINT(buffer);
         #endif
     }
 
-    wglMakeCurrent(wglDC, currentWglContext);
+    wglMakeCurrent(currentWglDC, currentWglContext);
     wglDeleteContext(dummyContext);
 
     return true;
@@ -430,6 +430,36 @@ inline b8 loadOpenGlFunctions() {
     result |= E_LOAD_FUNCTION(glDeleteProgram);
     result |= E_LOAD_FUNCTION(glDrawArrays);
     return result;
+}
+
+inline void messageCallback(u32 source, u32 type, u32 id, u32 severity, i32 length, const c8* message, void* userParam) {
+    if (severity == GL_DEBUG_SEVERITY_NOTIFICATION) { return; }
+
+    const auto sourceStr = [source]{
+        switch (source) {
+            case GL_DEBUG_SOURCE_API: return "API";
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM: return "Window System";
+            case GL_DEBUG_SOURCE_SHADER_COMPILER: return "Shader Compiler";
+            case GL_DEBUG_SOURCE_THIRD_PARTY: return "Third Party";
+            case GL_DEBUG_SOURCE_APPLICATION: return "Application";
+            case GL_DEBUG_SOURCE_OTHER: return "Other";
+            default: return "Unknown";
+        }
+    }();
+
+    const auto typeStr = [type]{
+        switch (type) {
+            case GL_DEBUG_TYPE_ERROR: return "Error";
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR: return "Deprecated Behavior";
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR: return "Undefined Behavior";
+            case GL_DEBUG_TYPE_PORTABILITY: return "Portability";
+            case GL_DEBUG_TYPE_PERFORMANCE: return "Performance";
+            case GL_DEBUG_TYPE_OTHER: return "Other";
+            default: return "Unknown";
+        }
+    }();
+
+    E_PRINT("OpenGL Debug Message: %s %s (%u) %s", sourceStr, typeStr, id, message);
 }
 
 } // namespace base::opengl::internal
