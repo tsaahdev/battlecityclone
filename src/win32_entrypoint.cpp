@@ -37,6 +37,7 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
             ::TranslateMessage(&msg);
             ::DispatchMessageA(&msg);
         }
+        opengl::beginFrame();
     }
 
     return 0;

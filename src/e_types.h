@@ -21,4 +21,8 @@ using c8 = char;
 using b8 = bool;
 using b32 = int32_t;
 
+constexpr i32 I32_MIN = -2147483647i32 - 1;
+constexpr i32 I32_MAX = 2147483647i32;
+constexpr u32 U32_MAX = 0xffffffffui32;
+
 } // namespace base
