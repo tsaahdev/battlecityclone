@@ -18,8 +18,11 @@ Thats it folks!
 - [x] load shaders
 - [x] render quad
 - [x] file reader
-- [ ] png load
-- [ ] textured quad
+- [ ] some memory allocation
+- [ ] png load (think on it later and use stb_image for now)
+- [x] stb_image
+- [x] textured quad
+- [ ] instanced rendering
 - [ ] a map
 - [ ] basic keyboard input
 - [ ] basic control a tank

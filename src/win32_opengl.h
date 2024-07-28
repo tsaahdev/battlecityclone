@@ -4,6 +4,9 @@
 
 #include "win32_opengl_defines.h"
 
+#include "e_png.h"
+#define STB_IMAGE_IMPLEMENTATION
+#include "stb_image.h"
 
 namespace base::opengl {
 
@@ -37,10 +40,11 @@ inline void messageCallback(u32 source, u32 type, u32 id, u32 severity, i32 leng
 u32 wip_vao{ 0 };
 u32 wip_vbo{ 0 };
 u32 wip_program{ 0 };
+u32 wip_texture{ 0 };
 
 } // namespace internal
 
-inline b8 init(::HINSTANCE instance, ::HWND windowHandle) {
+inline b8 init(::HINSTANCE instance, ::HWND windowHandle, i32 width, i32 height) {
     using namespace internal;
     // actual wgl -> modern opengl context creation was peeked from GLFW.
     // https://www.glfw.org/
@@ -71,6 +75,7 @@ inline b8 init(::HINSTANCE instance, ::HWND windowHandle) {
     // wglSwapIntervalEXT(0); // disable vsync
     wglSwapIntervalEXT(1); // enable vsync
 
+    glViewport(0, 0, width, height);
     glClearColor(0.26f, 0.53f, 0.96f, 1.0f); // cornflower blue
 
     return true;
@@ -80,10 +85,10 @@ inline b8 wip_test_init() {
     using namespace internal;
 
     const f32 vertices[]{
-        -0.5f,  0.5f, 0.0f,
-         0.5f,  0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
+        -0.5f,  0.5f, 0.0f, 0.0f,
+         0.5f,  0.5f, 1.0f, 0.0f,
+         0.5f, -0.5f, 1.0f, 1.0f,
+        -0.5f, -0.5f, 0.0f, 1.0f
     };
 
     glGenVertexArrays(1, &wip_vao);
@@ -93,8 +98,10 @@ inline b8 wip_test_init() {
     glBindBuffer(GL_ARRAY_BUFFER, wip_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(f32), nullptr);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), nullptr);
     glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), reinterpret_cast<void*>(2 * sizeof(f32)));
+    glEnableVertexAttribArray(1);
 
     const auto vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
     {
@@ -159,16 +166,40 @@ inline b8 wip_test_init() {
 
     glUseProgram(wip_program);
 
+    glGenTextures(1, &wip_texture);
+    glBindTexture(GL_TEXTURE_2D, wip_texture);
+
+    i32 x, y, n; // TODO: try own png implementation
+    u8* data = stbi_load("../assets/tileset.jpg", &x, &y, &n, 0);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+    stbi_image_free(data);
+    // glGenerateMipmap(GL_TEXTURE_2D);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glUniform1i(glGetUniformLocation(wip_program, "texture0"), 0);
+
     return true;
 }
 
 inline void beginFrame() {
     glClear(GL_COLOR_BUFFER_BIT);
+    glBindVertexArray(internal::wip_vao);
+    glUseProgram(internal::wip_program);
+    glBindTexture(GL_TEXTURE_2D, internal::wip_texture);
+
     glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
 }
 
 inline void endFrame() {
     ::SwapBuffers(internal::wglDC);
+}
+
+inline void resize(i32 width, i32 height) {
+    glViewport(0, 0, width, height);
+    beginFrame();
+    endFrame();
 }
 
 } // namespace base::opengl

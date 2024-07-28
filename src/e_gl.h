@@ -40,6 +40,19 @@ const i32 GL_FALSE = 0;
 
 const i32 GL_TRIANGLE_FAN = 0x0006;
 
+const i32 GL_TEXTURE_2D = 0x0de1;
+const i32 GL_TEXTURE_WRAP_S = 0x2802;
+const i32 GL_TEXTURE_WRAP_T = 0x2803;
+const i32 GL_TEXTURE_MIN_FILTER = 0x2801;
+const i32 GL_TEXTURE_MAG_FILTER = 0x2800;
+const i32 GL_CLAMP_TO_EDGE = 0x812f;
+const i32 GL_REPEAT = 0x2901;
+const i32 GL_LINEAR = 0x2601;
+const i32 GL_NEAREST = 0x2600;
+const i32 GL_RGBA = 0x1908;
+const i32 GL_RGB = 0x1907;
+const i32 GL_UNSIGNED_BYTE = 0x1401;
+
 
 
 static void (__stdcall* glClear)(u32){ nullptr };
@@ -74,5 +87,12 @@ static void (__stdcall* glGetProgramInfoLog)(u32, i32, i32*, c8*){ nullptr };
 static void (__stdcall* glUseProgram)(u32){ nullptr };
 static void (__stdcall* glDeleteProgram)(u32){ nullptr };
 static void (__stdcall* glDrawArrays)(u32, i32, i32){ nullptr };
+static void (__stdcall* glGenTextures)(i32, u32*){ nullptr };
+static void (__stdcall* glBindTexture)(u32, u32){ nullptr };
+static void (__stdcall* glTexImage2D)(u32, i32, i32, i32, i32, i32, u32, u32, const void*){ nullptr };
+static void (__stdcall* glGenerateMipmap)(u32){ nullptr };
+static void (__stdcall* glTexParameteri)(u32, u32, i32){ nullptr };
+static i32 (__stdcall* glGetUniformLocation)(u32, const c8*){ nullptr };
+static void (__stdcall* glUniform1i)(i32, i32){ nullptr };
 
 } // namespace base::opengl

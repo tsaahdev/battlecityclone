@@ -4,11 +4,32 @@
 
 #include "win32_opengl.h"
 
+#include "e_png.h"
+
 // https://stackoverflow.com/questions/68469954/how-to-choose-specific-gpu-when-create-opengl-context
 extern "C" __declspec(dllexport) ::DWORD NvOptimusEnablement{ 1 };
 extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance{ 1 };
 
 using namespace base;
+
+b8 running{ false };
+
+::LRESULT CALLBACK wndProc(::HWND hwnd, ::UINT msg, ::WPARAM wParam, ::LPARAM lParam) {
+    switch (msg) {
+        case WM_CLOSE: {
+            running = false;
+            ::PostQuitMessage(0);
+            return 0;
+        }
+        case WM_SIZE: {
+            const i32 width = LOWORD(lParam);
+            const i32 height = HIWORD(lParam);
+            opengl::resize(width, height);
+            return 0;
+        }
+    }
+    return ::DefWindowProcA(hwnd, msg, wParam, lParam);
+}
 
 #if defined(E_DEBUG_BUILD)
 i32 main() {
@@ -19,7 +40,7 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
     static const ::WNDCLASSEXA wc{
         .cbSize = sizeof(::WNDCLASSEXA),
         .style = CS_HREDRAW | CS_VREDRAW,
-        .lpfnWndProc = ::DefWindowProcA,
+        .lpfnWndProc = wndProc,
         .hInstance = hInstance,
         .lpszClassName = "BattleCityWindowClass",
     };
@@ -35,13 +56,26 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
     );
     if (hwnd == nullptr) { return -1; }
 
-    if (!opengl::init(hInstance, hwnd)) { return -1; }
+    if (!opengl::init(hInstance, hwnd, 800, 600)) { return -1; }
 
-    opengl::wip_test_init();
+    {
+        
+        // u32 fileSize{ 0 };
+        // const u32 bufferSize{ 4096 };
+        // u8 buffer[bufferSize];
+        // filesystem::readEntireFile("../assets/test_opaque.png", buffer, bufferSize, fileSize);
+        // png::Png png;
+        // png::load(buffer, fileSize, png);
+        
+        opengl::wip_test_init();
+
+    }
 
     ::ShowWindow(hwnd, SW_SHOW);
 
-    while (true) {
+
+    running = true;
+    while (running) {
         ::MSG msg{};
         while (::PeekMessageA(&msg, nullptr, 0, 0, PM_REMOVE)) {
             ::TranslateMessage(&msg);
