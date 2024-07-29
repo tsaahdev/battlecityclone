@@ -1,4 +1,9 @@
 #include "e_gl.h"
+#include "common.h"
+#include "win32_opengl.h"
+
+#include "win32_opengl_defines.h"
+
 #include "win32_opengl.h"
 
 namespace base::opengl::internal {
@@ -436,7 +441,7 @@ inline b8 loadOpenGlFunctions() {
     result |= E_LOAD_FUNCTION(glTexParameteri);
     result |= E_LOAD_FUNCTION(glGetUniformLocation);
     result |= E_LOAD_FUNCTION(glUniform1i);
-    
+
     return result;
 }
 

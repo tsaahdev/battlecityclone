@@ -3,7 +3,7 @@
 #include "common.h"
 
 #include "win32_opengl.h"
-
+#include "win32_opengl.inl"
 #include "e_png.h"
 
 // https://stackoverflow.com/questions/68469954/how-to-choose-specific-gpu-when-create-opengl-context

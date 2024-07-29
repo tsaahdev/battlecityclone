@@ -25,4 +25,16 @@ constexpr i32 I32_MIN = -2147483647i32 - 1;
 constexpr i32 I32_MAX = 2147483647i32;
 constexpr u32 U32_MAX = 0xffffffffui32;
 
+template <class T>
+union Vector2 {
+    struct {
+        T x;
+        T y;
+    };
+    T data[2];
+};
+
+using v2 = Vector2<f32>;
+using v2i = Vector2<i32>;
+
 } // namespace base
