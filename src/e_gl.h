@@ -33,9 +33,11 @@ const i32 GL_COMPILE_STATUS = 0x8b81;
 const i32 GL_LINK_STATUS = 0x8b82;
 
 const i32 GL_ARRAY_BUFFER = 0x8892;
+const i32 GL_UNIFORM_BUFFER = 0x8a11;
 const i32 GL_STATIC_DRAW = 0x88e4;
 
 const i32 GL_FLOAT = 0x1406;
+const i32 GL_INT = 0x1404;
 const i32 GL_FALSE = 0;
 
 const i32 GL_TRIANGLE_FAN = 0x0006;
@@ -94,5 +96,11 @@ static void (__stdcall* glGenerateMipmap)(u32){ nullptr };
 static void (__stdcall* glTexParameteri)(u32, u32, i32){ nullptr };
 static i32 (__stdcall* glGetUniformLocation)(u32, const c8*){ nullptr };
 static void (__stdcall* glUniform1i)(i32, i32){ nullptr };
+static void (__stdcall* glBindBufferBase)(u32, u32, u32){ nullptr };
+static u32 (__stdcall* glGetUniformBlockIndex)(u32, const c8*){ nullptr };
+static void (__stdcall* glUniformBlockBinding)(u32, u32, u32){ nullptr };
+static void (__stdcall* glBindBufferRange)(u32, u32, u32, i32, i32){ nullptr };
+static void (__stdcall* glVertexAttribDivisor)(u32, u32){ nullptr };
+static void (__stdcall* glDrawArraysInstanced)(u32, i32, i32, i32){ nullptr };
 
 } // namespace base::opengl

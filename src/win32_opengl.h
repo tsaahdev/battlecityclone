@@ -119,6 +119,7 @@ inline void pushQuad(SubTextureId id, v2 possition, v2 size) {
 }
 u32 wip_vao{ 0 };
 u32 wip_vbo{ 0 };
+u32 wip_instanced_vbo{ 0 };
 u32 wip_program{ 0 };
 u32 wip_texture{ 0 };
 
@@ -171,7 +172,7 @@ inline void beginFrame() {
     glUseProgram(wip_program);
     bindTexture(TextureId::TileSet);
 
-    glDrawArrays(GL_TRIANGLE_FAN, 0, 4);
+    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, 15);
 }
 
 inline void endFrame() {
@@ -211,53 +212,62 @@ inline b8 wip_test_init() {
     // - then pass 2xu8 for pos 1xu8 for size and 1xu8 for texture index as instanced data
     // - then render a quad million times
 
-    struct AtlasEntry {
-        SubTexture subTexture;
-        SubTextureId id;
-    };
-    AtlasEntry atlasData[100]{};
-    atlasData[static_cast<u32>(SubTextureId::Brick)] = { internal::subTextureMap[SubTextureId::Brick], SubTextureId::Brick };
 
 
-    const f32 quad[]{
-        -0.5f,  0.5f,
-         0.5f,  0.5f,
-         0.5f, -0.5f,
-        -0.5f, -0.5f
-    };
-    const i16 instanceData[]{ // TODO: think on size better
-        // position, size, subtextureId
-        0, 0, 1, 1,
-        1, 0, 2, 1
-    };
-    // i am so damn tired i cannot comrehand what i am doing lol
-    // i mean i am forgetting whhy i am doing it )
 
-
-    // const f32 vertices[]{
-    //     -0.5f,  0.5f, 0.0f, 0.0f,
-    //      0.5f,  0.5f, 1.0f, 0.0f,
-    //      0.5f, -0.5f, 1.0f, 1.0f,
-    //     -0.5f, -0.5f, 0.0f, 1.0f
-    // };
-    const f32 vertices[]{
-        -0.5f,  0.5f, 256 / 400.0f, 0.0f,
-         0.5f,  0.5f, (256 + 16) / 400.0f, 0.0f,
-         0.5f, -0.5f, (256 + 16) / 400.0f, 16 / 256.0f,
-        -0.5f, -0.5f, 256 / 400.0f, 16 / 256.0f
-    };
+    
 
     glGenVertexArrays(1, &wip_vao);
     glBindVertexArray(wip_vao);
 
+    const v2 quad[]{
+        { -0.5f,  0.5f },
+        { 0.5f,  0.5f },
+        { 0.5f, -0.5f },
+        { -0.5f, -0.5f }
+    };
     glGenBuffers(1, &wip_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, wip_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), nullptr);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(v2) * 4, quad, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(f32), nullptr);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(f32), reinterpret_cast<void*>(2 * sizeof(f32)));
+
+    const i32 instanceData[]{
+        0, 0, 1, 0, 0,
+        1, 0, 1, 0, 1,
+        2, 0, 1, 0, 0,
+        3, 0, 1, 0, 1,
+        4, 0, 1, 0, 1,
+        0, 1, 1, 0, 1,
+        1, 1, 1, 0, 0,
+        2, 1, 1, 0, 1,
+        3, 1, 1, 0, 1,
+        3, 1, 1, 0, 0,
+        0, 2, 1, 0, 1,
+        1, 2, 1, 0, 1,
+        2, 2, 1, 0, 1,
+        3, 2, 1, 0, 0,
+        3, 2, 1, 0, 1,
+    };
+    glGenBuffers(1, &wip_instanced_vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, wip_instanced_vbo);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(i32) * 5 * 15, instanceData, GL_STATIC_DRAW);
+    glVertexAttribPointer(1, 1, GL_INT, GL_FALSE, 5 * sizeof(i32), reinterpret_cast<void*>(0 * sizeof(i32)));
+    glVertexAttribPointer(2, 1, GL_INT, GL_FALSE, 5 * sizeof(i32), reinterpret_cast<void*>(1 * sizeof(i32)));
+    glVertexAttribPointer(3, 1, GL_INT, GL_FALSE, 5 * sizeof(i32), reinterpret_cast<void*>(2 * sizeof(i32)));
+    glVertexAttribPointer(4, 1, GL_INT, GL_FALSE, 5 * sizeof(i32), reinterpret_cast<void*>(3 * sizeof(i32)));
+    glVertexAttribPointer(5, 1, GL_INT, GL_FALSE, 5 * sizeof(i32), reinterpret_cast<void*>(4 * sizeof(i32)));
     glEnableVertexAttribArray(1);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
+    glEnableVertexAttribArray(4);
+    glEnableVertexAttribArray(5);
+    glVertexAttribDivisor(1, 1);
+    glVertexAttribDivisor(2, 1);
+    glVertexAttribDivisor(3, 1);
+    glVertexAttribDivisor(4, 1);
+    glVertexAttribDivisor(5, 1);
+
 
     const auto vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
     {
@@ -322,10 +332,20 @@ inline b8 wip_test_init() {
 
     glUseProgram(wip_program);
 
-    
+    const v4 textureCoords[]{
+        v4{ 256 / 400.0f, 0 / 256.0f, (256 + 16) / 400.0f, 0 / 256.0f }, v4{ (256 + 16) / 400.0f, 16 / 256.0f, 256 / 400.0f, 16 / 256.0f },
+        v4{ 256 / 400.0f, 16 / 256.0f, (256 + 16) / 400.0f, 16 / 256.0f }, v4{ (256 + 16) / 400.0f, 32 / 256.0f, 256 / 400.0f, 32 / 256.0f },
+    };
+    const u32 uniformTextureBlockIndex = glGetUniformBlockIndex(wip_program, "Textures");
+    glUniformBlockBinding(wip_program, uniformTextureBlockIndex, 0);
+    u32 uniformTextureBlock{ 0 };
+    glGenBuffers(1, &uniformTextureBlock);
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformTextureBlock);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(v4) * 2 * 2, textureCoords, GL_STATIC_DRAW);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniformTextureBlock);
+
 
     glUniform1i(glGetUniformLocation(wip_program, "texture0"), 0);
-
     return true;
 }
 

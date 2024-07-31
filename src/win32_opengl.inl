@@ -441,6 +441,12 @@ inline b8 loadOpenGlFunctions() {
     result |= E_LOAD_FUNCTION(glTexParameteri);
     result |= E_LOAD_FUNCTION(glGetUniformLocation);
     result |= E_LOAD_FUNCTION(glUniform1i);
+    result |= E_LOAD_FUNCTION(glBindBufferBase);
+    result |= E_LOAD_FUNCTION(glGetUniformBlockIndex);
+    result |= E_LOAD_FUNCTION(glUniformBlockBinding);
+    result |= E_LOAD_FUNCTION(glBindBufferRange);
+    result |= E_LOAD_FUNCTION(glVertexAttribDivisor);
+    result |= E_LOAD_FUNCTION(glDrawArraysInstanced);
 
     return result;
 }

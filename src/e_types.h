@@ -37,4 +37,20 @@ union Vector2 {
 using v2 = Vector2<f32>;
 using v2i = Vector2<i32>;
 
+union v4 {
+    struct {
+        f32 x;
+        f32 y;
+        f32 z;
+        f32 w;
+    };
+    struct {
+        f32 r;
+        f32 g;
+        f32 b;
+        f32 a;
+    };
+    f32 data[4];
+};
+
 } // namespace base
