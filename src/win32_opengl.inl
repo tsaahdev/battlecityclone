@@ -447,6 +447,8 @@ inline b8 loadOpenGlFunctions() {
     result |= E_LOAD_FUNCTION(glBindBufferRange);
     result |= E_LOAD_FUNCTION(glVertexAttribDivisor);
     result |= E_LOAD_FUNCTION(glDrawArraysInstanced);
+    result |= E_LOAD_FUNCTION(glVertexAttribIPointer);
+    result |= E_LOAD_FUNCTION(glBufferSubData);
 
     return result;
 }

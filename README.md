@@ -18,13 +18,18 @@ Thats it folks!
 - [x] load shaders
 - [x] render quad
 - [x] file reader
-- [ ] some memory allocation
-- [ ] png load (think on it later and use stb_image for now)
+- [x] use stb_image for texture loading
 - [x] stb_image
 - [x] textured quad
-- [ ] instanced rendering
-- [ ] a map
-- [ ] basic keyboard input
-- [ ] basic control a tank
+- [x] instanced rendering
+- [in progress] a map
+- [ ] some memory allocation
+- [ ] collision detection
+- [in progress] basic keyboard input
+- [in progress] basic control a tank
 - [ ] animations
+- [ ] intro and main menu
+- [ ] music and sound (omg no idea)
+- [ ] add all the maps
+- [ ] level editor
 - [ ] more...

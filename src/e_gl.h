@@ -38,6 +38,7 @@ const i32 GL_STATIC_DRAW = 0x88e4;
 
 const i32 GL_FLOAT = 0x1406;
 const i32 GL_INT = 0x1404;
+const i32 GL_UNSIGNED_INT = 0x1405;
 const i32 GL_FALSE = 0;
 
 const i32 GL_TRIANGLE_FAN = 0x0006;
@@ -102,5 +103,7 @@ static void (__stdcall* glUniformBlockBinding)(u32, u32, u32){ nullptr };
 static void (__stdcall* glBindBufferRange)(u32, u32, u32, i32, i32){ nullptr };
 static void (__stdcall* glVertexAttribDivisor)(u32, u32){ nullptr };
 static void (__stdcall* glDrawArraysInstanced)(u32, i32, i32, i32){ nullptr };
+static void (__stdcall* glVertexAttribIPointer)(u32, i32, u32, i32, const void*){ nullptr };
+static void (__stdcall* glBufferSubData)(u32, i32, i32, const void*){ nullptr };
 
 } // namespace base::opengl
