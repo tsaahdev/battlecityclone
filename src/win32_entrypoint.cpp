@@ -5,6 +5,8 @@
 #include "win32_opengl.h"
 #include "win32_opengl.inl"
 
+#include "map.h"
+
 // https://stackoverflow.com/questions/68469954/how-to-choose-specific-gpu-when-create-opengl-context
 extern "C" __declspec(dllexport) ::DWORD NvOptimusEnablement{ 1 };
 extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance{ 1 };
@@ -12,25 +14,6 @@ extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance{ 1 };
 using namespace base;
 
 b8 running{ false };
-
-struct Actions {
-    b8 t1_up{ false };
-    b8 t1_down{ false };
-    b8 t1_left{ false };
-    b8 t1_right{ false };
-    b8 t1_fire{ false };
-    b8 t1_pause{ false };
-    b8 t1_start{ false };
-} actions;
-
-struct Player {
-    opengl::SubTextureId sprite;
-    v2 pos;
-    i8 dir{ 0 }; // 0 - up, 1 - right, 2 - down, 3 - left
-    i8 lives{ 3 };
-} player1, player2;
-
-f32 speed = 4.0f;
 
 ::LRESULT CALLBACK wndProc(::HWND hwnd, ::UINT msg, ::WPARAM wParam, ::LPARAM lParam) {
     switch (msg) {
@@ -47,37 +30,37 @@ f32 speed = 4.0f;
         }
         case WM_KEYDOWN: {
             if (wParam == 'W') {
-                actions.t1_up = true;
+                map::actions.t1_up = true;
             } else if (wParam == 'S') {
-                actions.t1_down = true;
+                map::actions.t1_down = true;
             } else if (wParam == 'A') {
-                actions.t1_left = true;
+                map::actions.t1_left = true;
             } else if (wParam == 'D') {
-                actions.t1_right = true;
+                map::actions.t1_right = true;
             } else if (wParam == VK_SPACE) {
-                actions.t1_fire = true;
+                map::actions.t1_fire = true;
             } else if (wParam == VK_RETURN) {
-                actions.t1_start = true;
+                map::actions.t1_start = true;
             } else if (wParam == VK_ESCAPE) {
-                actions.t1_pause = true;
+                map::actions.t1_pause = true;
             }
             return 0;
         }
         case WM_KEYUP: {
             if (wParam == 'W') {
-                actions.t1_up = false;
+                map::actions.t1_up = false;
             } else if (wParam == 'S') {
-                actions.t1_down = false;
+                map::actions.t1_down = false;
             } else if (wParam == 'A') {
-                actions.t1_left = false;
+                map::actions.t1_left = false;
             } else if (wParam == 'D') {
-                actions.t1_right = false;
+                map::actions.t1_right = false;
             } else if (wParam == VK_SPACE) {
-                actions.t1_fire = false;
+                map::actions.t1_fire = false;
             } else if (wParam == VK_RETURN) {
-                actions.t1_start = false;
+                map::actions.t1_start = false;
             } else if (wParam == VK_ESCAPE) {
-                actions.t1_pause = false;
+                map::actions.t1_pause = false;
             }
             return 0;
         }
@@ -125,9 +108,9 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
     i64 lastCounter{ 0 };
     ::QueryPerformanceCounter(reinterpret_cast<::LARGE_INTEGER*>(&lastCounter));
 
-    player1.pos = { -4.0f, -11.0f };
-    player1.dir = 0;
-    player1.sprite = opengl::SubTextureId::Tank_0_Y_U_0;
+    map::Map map; // ugly
+    map::createMap0(map);
+    map::placeTank(map, 8, 24, map::Side::Player1);
 
     running = true;
     while (running) {
@@ -137,46 +120,7 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
             ::DispatchMessageA(&msg);
         }
 
-        const c8* map = "00000000000000000000000000"
-                        "00000000000000000000000000"
-                        "00110011001100110011001100"
-                        "00110011001100110011001100"
-                        "00110011001100110011001100"
-                        "00110011001100110011001100"
-                        "001100110011cc110011001100"
-                        "001100110011cc110011001100"
-                        "00110011001100110011001100"
-                        "00110011000000000011001100"
-                        "00110011000000000011001100"
-                        "00000000001100110000000000"
-                        "00000000001100110000000000"
-                        "11001111000000000011110011"
-                        "cc0011110000000000111100cc"
-                        "00000000001100110000000000"
-                        "00000000001111110000000000"
-                        "00110011001111110011001100"
-                        "00110011001100110011001100"
-                        "00110011001100110011001100"
-                        "00110011001100110011001100"
-                        "00110011000000000011001100"
-                        "00110011000000000011001100"
-                        "00110011000111100011001100"
-                        "0000000000010b100000000000"
-                        "00000000000100100000000000";
-
-        for (i32 y = 0; y < 26; ++y) {
-            for (i32 x = 0; x < 26; ++x) {
-                const c8 c = map[y * 26 + x];
-                if (c == '\0') { break;}
-                if (c == '1') {
-                    opengl::pushQuad(opengl::SubTextureId::Brick0, { (float)x - 13.0f, 13.0f - (float)y });
-                } else if (c == 'c') {
-                    opengl::pushQuad(opengl::SubTextureId::Concrete, { (float)x - 13.0f, 13.0f - (float)y });
-                } else if (c == 'b') {
-                    opengl::pushQuad(opengl::SubTextureId::Bird, { (float)x - 13.0f, 13.0f - (float)y }, 2);
-                }
-            }
-        }
+        
 
         // TODO: make a map thing better
         // I guess i want a separate thing for a map
@@ -202,56 +146,9 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
         f32 dt = (now - lastCounter) / static_cast<f32>(perfFreq);
         lastCounter = now;
 
-        static b8 flip{ false };
-        static f32 accmulator{ 0.0f };
-        accmulator += dt;
-        static const f32 threshold = 2.0f / 60.0f;
-        if (accmulator > threshold) {
-            accmulator -= threshold;
-            flip ^= true;
-        }
+        map::update(map, dt);
 
-        if (actions.t1_up) {
-            player1.pos.y += speed * dt;
-            player1.pos.x = roundf(player1.pos.x);
-            player1.dir = 0;
-            if (flip) {
-                player1.sprite = opengl::SubTextureId::Tank_0_Y_U_0;
-            } else {
-                player1.sprite = opengl::SubTextureId::Tank_0_Y_U_1;
-            }
-        } else if (actions.t1_down) {
-            player1.pos.y -= speed * dt;
-            player1.pos.x = roundf(player1.pos.x);
-            player1.dir = 2;
-            if (flip) {
-                player1.sprite = opengl::SubTextureId::Tank_0_Y_D_1;
-            } else {
-                player1.sprite = opengl::SubTextureId::Tank_0_Y_D_0;
-            }
-        } else if (actions.t1_left) {
-            player1.pos.x -= speed * dt;
-            player1.pos.y = roundf(player1.pos.y);
-            player1.dir = 3;
-            if (flip) {
-                player1.sprite = opengl::SubTextureId::Tank_0_Y_L_0;
-            } else {
-                player1.sprite = opengl::SubTextureId::Tank_0_Y_L_1;
-            }
-        } else if (actions.t1_right) {
-            player1.pos.x += speed * dt;
-            player1.pos.y = roundf(player1.pos.y);
-            player1.dir = 1;
-            if (flip) {
-                player1.sprite = opengl::SubTextureId::Tank_0_Y_R_0;
-            } else {
-                player1.sprite = opengl::SubTextureId::Tank_0_Y_R_1;
-            }
-
-        }
-
-        opengl::pushQuad(player1.sprite, player1.pos, 2);
-
+        map::pushQuads(map);
 
         opengl::prepareFrame();
         opengl::beginFrame();

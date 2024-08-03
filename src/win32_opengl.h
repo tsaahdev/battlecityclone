@@ -29,7 +29,7 @@ enum class SubTextureId: u32 {
     Water0 = 6,
     Water1 = 7,
     Water2 = 8,
-    Grass = 9,
+    Forest = 9,
     Snow = 10,
     Bird = 11,
     Flag = 12,
@@ -123,7 +123,7 @@ inline b8 loadTexture(const c8* filename, TextureId id) {
     glBindTexture(GL_TEXTURE_2D, textureId);
 
     i32 x, y, n;
-    u8* data = stbi_load(filename, &x, &y, &n, 0);
+    u8* data = stbi_load(filename, &x, &y, &n, 0); // TODO: read stbi: how to use own memory allocation
     if (!data) {
         E_PRINT("Failed to load texture: %s", filename);
         return false;
@@ -166,7 +166,7 @@ inline b8 loadTilesetAtlas(const c8* filename, TextureId id) {
     textureCoords[static_cast<u32>(SubTextureId::Water0)] = { (256 + 0) / 400.0f, (64 + 16) / 256.0f, (256 + 8) / 400.0f, (64 + 24) / 256.0f };
     textureCoords[static_cast<u32>(SubTextureId::Water1)] = { (256 + 8) / 400.0f, (64 + 16) / 256.0f, (256 + 16) / 400.0f, (64 + 24) / 256.0f };
     textureCoords[static_cast<u32>(SubTextureId::Water2)] = { (256 + 16) / 400.0f, (64 + 16) / 256.0f, (256 + 24) / 400.0f, (64 + 24) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Grass)] = { (256 + 8) / 400.0f, (64 + 8) / 256.0f, (256 + 16) / 400.0f, (64 + 16) / 256.0f };
+    textureCoords[static_cast<u32>(SubTextureId::Forest)] = { (256 + 8) / 400.0f, (64 + 8) / 256.0f, (256 + 16) / 400.0f, (64 + 16) / 256.0f };
     textureCoords[static_cast<u32>(SubTextureId::Snow)] = { (256 + 16) / 400.0f, (64 + 8) / 256.0f, (256 + 24) / 400.0f, (64 + 16) / 256.0f };
     textureCoords[static_cast<u32>(SubTextureId::Bird)] = { (256 + 48) / 400.0f, (32) / 256.0f, (256 + 48 + 16) / 400.0f, (48) / 256.0f };
     textureCoords[static_cast<u32>(SubTextureId::Flag)] = { (256 + 64) / 400.0f, (32) / 256.0f, (256 + 64 + 16) / 400.0f, (48) / 256.0f };
@@ -289,7 +289,7 @@ inline b8 init(::HINSTANCE instance, ::HWND windowHandle, i32 width, i32 height)
 
     if (!loadTexture("../assets/test_opaque.png", TextureId::TestOpaque)) { return false; }
     
-    if (!loadTilesetAtlas("../assets/tileset.jpg", TextureId::TileSet)) { return false; };
+    if (!loadTilesetAtlas("../assets/tileset.png", TextureId::TileSet)) { return false; };
 
     // wglSwapIntervalEXT(0); // disable vsync
     wglSwapIntervalEXT(1); // enable vsync
