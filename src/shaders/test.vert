@@ -31,7 +31,7 @@ vec2 getTexCoord() {
 
 void main() {
     vec2 aspectRatio = vec2(width, height) / float(height);
-    vec2 vertPos = qPos + vPos * qSize - vec2(0.5f) * (qSize - 1);
+    vec2 vertPos = qPos - vec2(13, 13) + vPos * qSize - vec2(0.5f) * (qSize - 1);
     gl_Position = vec4(vertPos / 14.0f, 0, 1) / vec4(aspectRatio, 1, 1);
     texCoord = getTexCoord();
 }

@@ -32,7 +32,18 @@ union Vector2 {
         T y;
     };
     T data[2];
+    Vector2<T>& operator+=(const Vector2<T>& rhs) {
+        x += rhs.x;
+        y += rhs.y;
+        return *this;
+    }
+    
 };
+
+template <class T>
+Vector2<T> operator*(const Vector2<T>& l, f32 r) {
+    return { l.x * r, l.y * r };
+}
 
 using v2 = Vector2<f32>;
 using v2i = Vector2<i32>;

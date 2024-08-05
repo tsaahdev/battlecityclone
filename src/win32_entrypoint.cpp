@@ -5,13 +5,16 @@
 #include "win32_opengl.h"
 #include "win32_opengl.inl"
 
-#include "map.h"
+#include "game.h"
+#include "ecs.h"
 
 // https://stackoverflow.com/questions/68469954/how-to-choose-specific-gpu-when-create-opengl-context
 extern "C" __declspec(dllexport) ::DWORD NvOptimusEnablement{ 1 };
 extern "C" __declspec(dllexport) int AmdPowerXpressRequestHighPerformance{ 1 };
 
 using namespace base;
+
+
 
 b8 running{ false };
 
@@ -26,42 +29,6 @@ b8 running{ false };
             const i32 width = LOWORD(lParam);
             const i32 height = HIWORD(lParam);
             opengl::resize(width, height);
-            return 0;
-        }
-        case WM_KEYDOWN: {
-            if (wParam == 'W') {
-                map::actions.t1_up = true;
-            } else if (wParam == 'S') {
-                map::actions.t1_down = true;
-            } else if (wParam == 'A') {
-                map::actions.t1_left = true;
-            } else if (wParam == 'D') {
-                map::actions.t1_right = true;
-            } else if (wParam == VK_SPACE) {
-                map::actions.t1_fire = true;
-            } else if (wParam == VK_RETURN) {
-                map::actions.t1_start = true;
-            } else if (wParam == VK_ESCAPE) {
-                map::actions.t1_pause = true;
-            }
-            return 0;
-        }
-        case WM_KEYUP: {
-            if (wParam == 'W') {
-                map::actions.t1_up = false;
-            } else if (wParam == 'S') {
-                map::actions.t1_down = false;
-            } else if (wParam == 'A') {
-                map::actions.t1_left = false;
-            } else if (wParam == 'D') {
-                map::actions.t1_right = false;
-            } else if (wParam == VK_SPACE) {
-                map::actions.t1_fire = false;
-            } else if (wParam == VK_RETURN) {
-                map::actions.t1_start = false;
-            } else if (wParam == VK_ESCAPE) {
-                map::actions.t1_pause = false;
-            }
             return 0;
         }
     }
@@ -108,9 +75,8 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
     i64 lastCounter{ 0 };
     ::QueryPerformanceCounter(reinterpret_cast<::LARGE_INTEGER*>(&lastCounter));
 
-    map::Map map; // ugly
-    map::createMap0(map);
-    map::placeTank(map, 8, 24, map::Side::Player1);
+    game::createMap0();
+    game::createPlayer1();
 
     running = true;
     while (running) {
@@ -146,9 +112,12 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
         f32 dt = (now - lastCounter) / static_cast<f32>(perfFreq);
         lastCounter = now;
 
-        map::update(map, dt);
-
-        map::pushQuads(map);
+        // game::update(map, dt);
+        game::updatePlayer1Input();
+        ecs::inputSystem();
+        ecs::moveSystem(dt);
+        ecs::animationSystem(dt);
+        ecs::renderSystem();
 
         opengl::prepareFrame();
         opengl::beginFrame();

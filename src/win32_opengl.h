@@ -19,7 +19,7 @@ enum class TextureId: u32 {
     TestOpaque,
     TileSet,
 };
-enum class SubTextureId: u32 {
+enum class SpriteId: u32 {
     Brick0 = 0,
     Brick1 = 1,
     Brick2 = 2,
@@ -107,7 +107,7 @@ inline void messageCallback(u32 source, u32 type, u32 id, u32 severity, i32 leng
 // what if i have an additional storage for textures to be referenced in my subtextures?
 
 std::unordered_map<TextureId, u32> textureMap;
-std::unordered_map<SubTextureId, SubTexture> subTextureMap;
+std::unordered_map<SpriteId, SubTexture> subTextureMap;
 
 
 
@@ -155,43 +155,43 @@ inline b8 loadTilesetAtlas(const c8* filename, TextureId id) {
     if (!loadTexture(filename, id)) { return false; }
 
     std::vector<v4> textureCoords;
-    textureCoords.resize(static_cast<u32>(SubTextureId::COUNT));
+    textureCoords.resize(static_cast<u32>(SpriteId::COUNT));
 
-    textureCoords[static_cast<u32>(SubTextureId::Brick0)] = { (256 + 0) / 400.0f, (64 + 0) / 256.0f, (256 + 8) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Brick1)] = { (256 + 8) / 400.0f, (64 + 0) / 256.0f, (256 + 16) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Brick2)] = { (256 + 16) / 400.0f, (64 + 0) / 256.0f, (256 + 24) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Brick3)] = { (256 + 24) / 400.0f, (64 + 0) / 256.0f, (256 + 32) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Brick4)] = { (256 + 32) / 400.0f, (64 + 0) / 256.0f, (256 + 40) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Concrete)] = { (256 + 0) / 400.0f, (64 + 8) / 256.0f, (256 + 8) / 400.0f, (64 + 16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Water0)] = { (256 + 0) / 400.0f, (64 + 16) / 256.0f, (256 + 8) / 400.0f, (64 + 24) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Water1)] = { (256 + 8) / 400.0f, (64 + 16) / 256.0f, (256 + 16) / 400.0f, (64 + 24) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Water2)] = { (256 + 16) / 400.0f, (64 + 16) / 256.0f, (256 + 24) / 400.0f, (64 + 24) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Forest)] = { (256 + 8) / 400.0f, (64 + 8) / 256.0f, (256 + 16) / 400.0f, (64 + 16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Snow)] = { (256 + 16) / 400.0f, (64 + 8) / 256.0f, (256 + 24) / 400.0f, (64 + 16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Bird)] = { (256 + 48) / 400.0f, (32) / 256.0f, (256 + 48 + 16) / 400.0f, (48) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Flag)] = { (256 + 64) / 400.0f, (32) / 256.0f, (256 + 64 + 16) / 400.0f, (48) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick0)] = { (256 + 0) / 400.0f, (64 + 0) / 256.0f, (256 + 8) / 400.0f, (64 + 8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick1)] = { (256 + 8) / 400.0f, (64 + 0) / 256.0f, (256 + 16) / 400.0f, (64 + 8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick2)] = { (256 + 16) / 400.0f, (64 + 0) / 256.0f, (256 + 24) / 400.0f, (64 + 8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick3)] = { (256 + 24) / 400.0f, (64 + 0) / 256.0f, (256 + 32) / 400.0f, (64 + 8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick4)] = { (256 + 32) / 400.0f, (64 + 0) / 256.0f, (256 + 40) / 400.0f, (64 + 8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Concrete)] = { (256 + 0) / 400.0f, (64 + 8) / 256.0f, (256 + 8) / 400.0f, (64 + 16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Water0)] = { (256 + 0) / 400.0f, (64 + 16) / 256.0f, (256 + 8) / 400.0f, (64 + 24) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Water1)] = { (256 + 8) / 400.0f, (64 + 16) / 256.0f, (256 + 16) / 400.0f, (64 + 24) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Water2)] = { (256 + 16) / 400.0f, (64 + 16) / 256.0f, (256 + 24) / 400.0f, (64 + 24) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Forest)] = { (256 + 8) / 400.0f, (64 + 8) / 256.0f, (256 + 16) / 400.0f, (64 + 16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Snow)] = { (256 + 16) / 400.0f, (64 + 8) / 256.0f, (256 + 24) / 400.0f, (64 + 16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Bird)] = { (256 + 48) / 400.0f, (32) / 256.0f, (256 + 48 + 16) / 400.0f, (48) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Flag)] = { (256 + 64) / 400.0f, (32) / 256.0f, (256 + 64 + 16) / 400.0f, (48) / 256.0f };
 
     // TODO: i don't like how we are grabbing tank sprites, I wanna grab em differently
     // const Sprite tankSprites[color][level][direction][frame] would be better
     // but think on it
 
-    textureCoords[static_cast<u32>(SubTextureId::Tank_0_Y_U_0)] = { (0) / 400.0f, (0) / 256.0f, (16) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Tank_0_Y_U_1)] = { (16) / 400.0f, (0) / 256.0f, (32) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Tank_0_Y_L_0)] = { (32) / 400.0f, (0) / 256.0f, (48) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Tank_0_Y_L_1)] = { (48) / 400.0f, (0) / 256.0f, (64) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Tank_0_Y_D_0)] = { (64) / 400.0f, (0) / 256.0f, (80) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Tank_0_Y_D_1)] = { (80) / 400.0f, (0) / 256.0f, (96) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Tank_0_Y_R_0)] = { (96) / 400.0f, (0) / 256.0f, (112) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SubTextureId::Tank_0_Y_R_1)] = { (112) / 400.0f, (0) / 256.0f, (128) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_U_0)] = { (0) / 400.0f, (0) / 256.0f, (16) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_U_1)] = { (16) / 400.0f, (0) / 256.0f, (32) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_L_0)] = { (32) / 400.0f, (0) / 256.0f, (48) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_L_1)] = { (48) / 400.0f, (0) / 256.0f, (64) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_D_0)] = { (64) / 400.0f, (0) / 256.0f, (80) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_D_1)] = { (80) / 400.0f, (0) / 256.0f, (96) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_R_0)] = { (96) / 400.0f, (0) / 256.0f, (112) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_R_1)] = { (112) / 400.0f, (0) / 256.0f, (128) / 400.0f, (16) / 256.0f };
 
 
     glGenBuffers(1, &uniformTextureBlock);
     glBindBuffer(GL_UNIFORM_BUFFER, uniformTextureBlock);
-    glBufferData(GL_UNIFORM_BUFFER, sizeof(v4) * static_cast<u32>(SubTextureId::COUNT), textureCoords.data(), GL_STATIC_DRAW);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(v4) * static_cast<u32>(SpriteId::COUNT), textureCoords.data(), GL_STATIC_DRAW);
     return true;
 }
 
-inline void addSubtexture(TextureId texture, SubTextureId id, v2 topLeft, v2 bottomRight) {
+inline void addSubtexture(TextureId texture, SpriteId id, v2 topLeft, v2 bottomRight) {
 
     internal::subTextureMap[id] = SubTexture{ topLeft, bottomRight, texture };
     // TODO: do it in a different way pls, store subtextures in a array so we could pass it into gpu esealy 
@@ -202,7 +202,7 @@ inline void addSubtexture(TextureId texture, SubTextureId id, v2 topLeft, v2 bot
 inline void bindTexture(TextureId id) {
     glBindTexture(GL_TEXTURE_2D, internal::textureMap[id]);
 }
-inline void bindTexture(SubTextureId id) {
+inline void bindTexture(SpriteId id) {
     const auto& subTexture = internal::subTextureMap[id];
     glBindTexture(GL_TEXTURE_2D, internal::textureMap[subTexture.id]);
 }
@@ -211,11 +211,11 @@ struct Quad {
     v2 pos{ 0.0f, 0.0f };
     f32 size{ 1.0f };
     TextureId textureId{ 0 };
-    SubTextureId id{ 0 };
+    SpriteId id{ 0 };
 };
 std::vector<Quad> quads;
 
-inline void pushQuad(SubTextureId id, v2 position, f32 size = 1.0f) {
+inline void pushQuad(SpriteId id, v2 position, f32 size = 1.0f) {
     quads.emplace_back(Quad{ position, size, internal::subTextureMap[id].id, id });
 }
 

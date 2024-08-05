@@ -22,12 +22,13 @@ Thats it folks!
 - [x] stb_image
 - [x] textured quad
 - [x] instanced rendering
-- [in progress] a map
-- [ ] some memory allocation
+- [x] throw in some ecs
+- [x] basic map
+- [x] basic keyboard input
+- [x] basic control a tank
+- [x] basic animations
 - [ ] collision detection
-- [in progress] basic keyboard input
-- [in progress] basic control a tank
-- [ ] animations
+- [ ] some memory allocation
 - [ ] intro and main menu
 - [ ] music and sound (omg no idea)
 - [ ] add all the maps
