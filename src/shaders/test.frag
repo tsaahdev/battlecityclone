@@ -11,6 +11,7 @@ float average(vec3 color) {
 }
 
 void main() {
+    // FragColor = vec4(1, 0, 1, 1);
     vec4 color = texture(texture0, texCoord);
     if (average(color.rgb) < 1 / 255.0f) {
         discard;

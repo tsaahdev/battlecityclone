@@ -183,7 +183,7 @@ inline void renderSystem() {
             ++entityId;
             continue;
         }
-        opengl::pushQuad(sprite.spriteId, sprite.position, sprite.size);
+        opengl::pushQuad(sprite.position, sprite.size, sprite.spriteId);
         ++entityId;
     }
 }

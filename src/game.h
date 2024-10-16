@@ -32,8 +32,8 @@ inline void createMap0() {
         "00110011000000000011001100"
         "00110011000000000011001100"
         "00110011000111100011001100"
-        "0000000000010b100000000000"
-        "00000000000100100000000000";
+        "00000000000100100000000000"
+        "000000000001b0100000000000";
     for (i32 y = 0; y < 26; ++y) {
         for (i32 x = 0; x < 26; ++x) {
             opengl::SpriteId spriteId{ opengl::SpriteId::Snow };
@@ -65,7 +65,7 @@ ecs::InputComponent* player1input{ nullptr };
 inline void createPlayer1() {
     const auto entityId = ecs::createEntity();
     ecs::addComponent(entityId, ecs::RenderableSpriteComponent{
-        .position = { 9.0f, 2.0f },
+        .position = { 8.0f, 1.0f },
         .size = 2.0f,
         .layer = 0.0f,
         .spriteId = opengl::SpriteId::Tank_0_Y_U_0

@@ -32,12 +32,26 @@ union Vector2 {
         T y;
     };
     T data[2];
+
+    Vector2<T>(): x{ static_cast<T>(0) }, y{ static_cast<T>(0) }{}
+    template <class U>
+    Vector2<T>(U v): x{ static_cast<T>(v) }, y{ static_cast<T>(v) }{}
+    template <class U, class K>
+    Vector2<T>(U x, K y): x{ static_cast<T>(x) }, y{ static_cast<T>(y) }{}
+    template <class U>
+    Vector2<T>(const Vector2<U>& o): x{ static_cast<T>(o.x) }, y{ static_cast<T>(o.y) }{}
+    template <class U>
+    Vector2<T>& operator=(const Vector2<U>& o) {
+        x = static_cast<T>(o.x);
+        y = static_cast<T>(o.y);
+        return *this;
+    }
+
     Vector2<T>& operator+=(const Vector2<T>& rhs) {
         x += rhs.x;
         y += rhs.y;
         return *this;
     }
-    
 };
 
 template <class T>

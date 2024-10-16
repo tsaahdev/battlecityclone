@@ -12,7 +12,7 @@
 
 namespace base::opengl {
 
-const i32 MAX_QUADS = 8192;
+const i32 MAX_QUADS = 1024;
 
 enum class TextureId: u32 {
     None = 0,
@@ -115,6 +115,7 @@ std::unordered_map<SpriteId, SubTexture> subTextureMap;
 
 
 u32 uniformTextureBlock{ 0 }; // TODO: refactor where to store this
+u32 uniformQuadDataBlock{ 0 }; // TODO: refactor where to store this
 
 // TODO: refactor also theese functions where they should be stored
 inline b8 loadTexture(const c8* filename, TextureId id) {
@@ -157,32 +158,32 @@ inline b8 loadTilesetAtlas(const c8* filename, TextureId id) {
     std::vector<v4> textureCoords;
     textureCoords.resize(static_cast<u32>(SpriteId::COUNT));
 
-    textureCoords[static_cast<u32>(SpriteId::Brick0)] = { (256 + 0) / 400.0f, (64 + 0) / 256.0f, (256 + 8) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Brick1)] = { (256 + 8) / 400.0f, (64 + 0) / 256.0f, (256 + 16) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Brick2)] = { (256 + 16) / 400.0f, (64 + 0) / 256.0f, (256 + 24) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Brick3)] = { (256 + 24) / 400.0f, (64 + 0) / 256.0f, (256 + 32) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Brick4)] = { (256 + 32) / 400.0f, (64 + 0) / 256.0f, (256 + 40) / 400.0f, (64 + 8) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Concrete)] = { (256 + 0) / 400.0f, (64 + 8) / 256.0f, (256 + 8) / 400.0f, (64 + 16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Water0)] = { (256 + 0) / 400.0f, (64 + 16) / 256.0f, (256 + 8) / 400.0f, (64 + 24) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Water1)] = { (256 + 8) / 400.0f, (64 + 16) / 256.0f, (256 + 16) / 400.0f, (64 + 24) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Water2)] = { (256 + 16) / 400.0f, (64 + 16) / 256.0f, (256 + 24) / 400.0f, (64 + 24) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Forest)] = { (256 + 8) / 400.0f, (64 + 8) / 256.0f, (256 + 16) / 400.0f, (64 + 16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Snow)] = { (256 + 16) / 400.0f, (64 + 8) / 256.0f, (256 + 24) / 400.0f, (64 + 16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Bird)] = { (256 + 48) / 400.0f, (32) / 256.0f, (256 + 48 + 16) / 400.0f, (48) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Flag)] = { (256 + 64) / 400.0f, (32) / 256.0f, (256 + 64 + 16) / 400.0f, (48) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick0)]   = { (256.01f +  0) / 400.0f, (63.99f +  0) / 256.0f, (256.01f +  8) / 400.0f, (63.99f +  8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick1)]   = { (256.01f +  8) / 400.0f, (63.99f +  0) / 256.0f, (256.01f + 16) / 400.0f, (63.99f +  8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick2)]   = { (256.01f + 16) / 400.0f, (63.99f +  0) / 256.0f, (256.01f + 24) / 400.0f, (63.99f +  8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick3)]   = { (256.01f + 24) / 400.0f, (63.99f +  0) / 256.0f, (256.01f + 32) / 400.0f, (63.99f +  8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Brick4)]   = { (256.01f + 32) / 400.0f, (63.99f +  0) / 256.0f, (256.01f + 40) / 400.0f, (63.99f +  8) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Concrete)] = { (256.01f +  0) / 400.0f, (63.99f +  8) / 256.0f, (256.01f +  8) / 400.0f, (63.99f + 16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Water0)]   = { (256.01f +  0) / 400.0f, (63.99f + 16) / 256.0f, (256.01f +  8) / 400.0f, (63.99f + 24) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Water1)]   = { (256.01f +  8) / 400.0f, (63.99f + 16) / 256.0f, (256.01f + 16) / 400.0f, (63.99f + 24) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Water2)]   = { (256.01f + 16) / 400.0f, (63.99f + 16) / 256.0f, (256.01f + 24) / 400.0f, (63.99f + 24) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Forest)]   = { (256.01f +  8) / 400.0f, (63.99f +  8) / 256.0f, (256.01f + 16) / 400.0f, (63.99f + 16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Snow)]     = { (256.01f + 16) / 400.0f, (63.99f +  8) / 256.0f, (256.01f + 24) / 400.0f, (63.99f + 16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Bird)]     = { (256.01f + 48) / 400.0f, (31.99f +  0) / 256.0f, (256.01f + 64) / 400.0f, (47.99f +  0) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Flag)]     = { (256.01f + 64) / 400.0f, (31.99f +  0) / 256.0f, (256.01f + 80) / 400.0f, (47.99f +  0) / 256.0f };
 
     // TODO: i don't like how we are grabbing tank sprites, I wanna grab em differently
     // const Sprite tankSprites[color][level][direction][frame] would be better
     // but think on it
 
-    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_U_0)] = { (0) / 400.0f, (0) / 256.0f, (16) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_U_1)] = { (16) / 400.0f, (0) / 256.0f, (32) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_L_0)] = { (32) / 400.0f, (0) / 256.0f, (48) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_L_1)] = { (48) / 400.0f, (0) / 256.0f, (64) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_D_0)] = { (64) / 400.0f, (0) / 256.0f, (80) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_D_1)] = { (80) / 400.0f, (0) / 256.0f, (96) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_R_0)] = { (96) / 400.0f, (0) / 256.0f, (112) / 400.0f, (16) / 256.0f };
-    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_R_1)] = { (112) / 400.0f, (0) / 256.0f, (128) / 400.0f, (16) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_U_0)] = {   (0.01f) / 400.0f, (0.01) / 256.0f,  (16.01f) / 400.0f, (15.99) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_U_1)] = {  (16.01f) / 400.0f, (0.01) / 256.0f,  (32.01f) / 400.0f, (15.99) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_L_0)] = {  (32.01f) / 400.0f, (0.01) / 256.0f,  (48.01f) / 400.0f, (15.99) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_L_1)] = {  (48.01f) / 400.0f, (0.01) / 256.0f,  (64.01f) / 400.0f, (15.99) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_D_0)] = {  (64.01f) / 400.0f, (0.01) / 256.0f,  (80.01f) / 400.0f, (15.99) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_D_1)] = {  (80.01f) / 400.0f, (0.01) / 256.0f,  (96.01f) / 400.0f, (15.99) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_R_0)] = {  (96.01f) / 400.0f, (0.01) / 256.0f, (112.01f) / 400.0f, (15.99) / 256.0f };
+    textureCoords[static_cast<u32>(SpriteId::Tank_0_Y_R_1)] = { (112.01f) / 400.0f, (0.01) / 256.0f, (128.01f) / 400.0f, (15.99) / 256.0f };
 
 
     glGenBuffers(1, &uniformTextureBlock);
@@ -207,6 +208,27 @@ inline void bindTexture(SpriteId id) {
     glBindTexture(GL_TEXTURE_2D, internal::textureMap[subTexture.id]);
 }
 
+struct QuadData {
+    v2 tilePosition;
+    v2 tileSize;
+    TextureId texture{ 0 };
+    SpriteId subTexture{ 0 };
+    f32 padding[2];
+    // v4 color;
+    // f32 z{ 0.0f };
+};
+std::vector<QuadData> quadData;
+
+inline void wip_initQuadDataBufferObject() {
+    glGenBuffers(1, &uniformQuadDataBlock);
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformQuadDataBlock);
+    glBufferData(GL_UNIFORM_BUFFER, sizeof(QuadData) * MAX_QUADS, nullptr, GL_STATIC_DRAW);
+}
+
+inline void pushQuad(v2 tilePosition, v2 tileSize, SpriteId id) {
+    quadData.emplace_back(QuadData{ tilePosition, tileSize, internal::subTextureMap[id].id, id });
+}
+
 struct Quad {
     v2 pos{ 0.0f, 0.0f };
     f32 size{ 1.0f };
@@ -226,9 +248,14 @@ u32 wip_program{ 0 };
 u32 wip_texture{ 0 };
 
 inline void prepareFrame() {
-    glBindBuffer(GL_ARRAY_BUFFER, wip_instanced_vbo);
-    glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Quad) * static_cast<i32>(quads.size()), quads.data());
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // glBindBuffer(GL_ARRAY_BUFFER, wip_instanced_vbo);
+    // glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Quad) * static_cast<i32>(quads.size()), quads.data());
+    // glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    glBindBuffer(GL_UNIFORM_BUFFER, uniformQuadDataBlock);
+    glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(QuadData) * static_cast<i32>(quadData.size()), quadData.data());
+    glBindBufferBase(GL_UNIFORM_BUFFER, 1, uniformQuadDataBlock);
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
 }
 
 inline void beginFrame() {
@@ -237,8 +264,9 @@ inline void beginFrame() {
     glUseProgram(wip_program);
     bindTexture(TextureId::TileSet);
 
-    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<i32>(quads.size()));
-    
+    // glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<i32>(quads.size()));
+    glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<i32>(quadData.size()));
+
     glUseProgram(0);
     glBindVertexArray(0);
 }
@@ -246,6 +274,7 @@ inline void beginFrame() {
 inline void endFrame() {
     ::SwapBuffers(internal::wglDC);
     quads.clear();
+    quadData.clear();
 }
 
 inline void resize(i32 width, i32 height) {
@@ -299,6 +328,8 @@ inline b8 init(::HINSTANCE instance, ::HWND windowHandle, i32 width, i32 height)
 
     // glClearColor(0.26f, 0.53f, 0.96f, 1.0f); // cornflower blue
     glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black
+
+    wip_initQuadDataBufferObject();
 
     return true;
 }
@@ -446,4 +477,5 @@ inline b8 wip_test_init() {
 }
 
 } // namespace base::opengl
+
 
