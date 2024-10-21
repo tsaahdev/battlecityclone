@@ -178,6 +178,7 @@ inline void animationSystem(f32 dt) {
 
 inline void renderSystem() {
     u32 entityId = 0;
+    opengl::pushQuad({}, { 26 }, opengl::SpriteId::None, {});
     for (const auto& sprite: renderableSpriteComponents) { // TODO: use layer
         if (!entities[entityId].alive || !entities[entityId].componentMask.test(RenderableSpriteComponent::componentMask)) {
             ++entityId;

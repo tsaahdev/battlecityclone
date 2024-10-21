@@ -8,32 +8,32 @@ namespace base::game {
 
 inline void createMap0() {
     const c8* mapString =
-        "00000000000000000000000000"
-        "00000000000000000000000000"
-        "00110011001100110011001100"
-        "00110011001100110011001100"
-        "00110011001100110011001100"
-        "00110011001100110011001100"
-        "001100110011cc110011001100"
-        "001100110011cc110011001100"
-        "00110011001100110011001100"
-        "00110011000000000011001100"
-        "00110011000000000011001100"
-        "00000000001100110000000000"
-        "00000000001100110000000000"
-        "11001111000000000011110011"
-        "cc0011110000000000111100cc"
-        "00000000001100110000000000"
-        "00000000001111110000000000"
-        "00110011001111110011001100"
-        "00110011001100110011001100"
-        "00110011001100110011001100"
-        "00110011001100110011001100"
-        "00110011000000000011001100"
-        "00110011000000000011001100"
-        "00110011000111100011001100"
-        "00000000000100100000000000"
-        "000000000001b0100000000000";
+        "                          "
+        "                          "
+        "  11  11  11  11  11  11  "
+        "  11  11  11  11  11  11  "
+        "  11  11  11  11  11  11  "
+        "  11  11  11  11  11  11  "
+        "  11  11  11cc11  11  11  "
+        "  11  11  11cc11  11  11  "
+        "  11  11  11  11  11  11  "
+        "  11  11          11  11  "
+        "  11  11          11  11  "
+        "          11  11          "
+        "          11  11          "
+        "11  1111          1111  11"
+        "cc  1111          1111  cc"
+        "          11  11          "
+        "          111111          "
+        "  11  11  111111  11  11  "
+        "  11  11  11  11  11  11  "
+        "  11  11  11  11  11  11  "
+        "  11  11  11  11  11  11  "
+        "  11  11          11  11  "
+        "  11  11          11  11  "
+        "  11  11   1111   11  11  "
+        "           1  1           "
+        "           1b 1           ";
     for (i32 y = 0; y < 26; ++y) {
         for (i32 x = 0; x < 26; ++x) {
             opengl::SpriteId spriteId{ opengl::SpriteId::Snow };
@@ -52,7 +52,7 @@ inline void createMap0() {
             }
             const auto entityId = ecs::createEntity();
             ecs::addComponent(entityId, ecs::RenderableSpriteComponent{
-                .position = { (f32)x, 26.0f - (f32)y },
+                .position = { (f32)x, 25.0f - (f32)y },
                 .size = size,
                 .layer = 0.0f,
                 .spriteId = spriteId
@@ -65,7 +65,7 @@ ecs::InputComponent* player1input{ nullptr };
 inline void createPlayer1() {
     const auto entityId = ecs::createEntity();
     ecs::addComponent(entityId, ecs::RenderableSpriteComponent{
-        .position = { 8.0f, 1.0f },
+        .position = { 8.0f, 0.0f },
         .size = 2.0f,
         .layer = 0.0f,
         .spriteId = opengl::SpriteId::Tank_0_Y_U_0
@@ -94,9 +94,5 @@ inline void updatePlayer1Input() {
     player1input->pause = (::GetAsyncKeyState(VK_ESCAPE) & 0x8000) == 0x8000;
     player1input->start = (::GetAsyncKeyState(VK_RETURN) & 0x8000) == 0x8000;
 }
-
-
-
-
 
 } // namespace base::game

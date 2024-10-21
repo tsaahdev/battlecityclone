@@ -10,7 +10,8 @@ layout (std140, binding = 0) uniform Textures {
 const int MAX_QUADS = 1024; // TODO:  refactor
 struct QuadData {
     vec4 tilePositionAndSize;
-    vec4 textureIds;
+    vec4 color;
+    vec4 textureIdsAndZ;
 };
 layout (std140, binding = 1) uniform QuadDataBlock {
     QuadData quadData[MAX_QUADS];
@@ -20,6 +21,8 @@ uniform int width;
 uniform int height;
 
 out vec2 texCoord;
+out flat int useColor;
+out vec4 quadColor;
 
 vec2 getTexCoord(uint subTextureId) {
     vec4 uv = textureCoords[subTextureId];
@@ -44,8 +47,12 @@ void main() {
     const QuadData quad = quadData[gl_InstanceID];
     const vec2 tilePosition = quad.tilePositionAndSize.xy;
     const vec2 tileSize = quad.tilePositionAndSize.zw;
-    const uint textureId = floatBitsToUint(quad.textureIds.x);
-    const uint subTextureId = floatBitsToUint(quad.textureIds.y);
+    const vec4 color = quad.color;
+    const uint textureId = floatBitsToUint(quad.textureIdsAndZ.x);
+    const uint subTextureId = floatBitsToUint(quad.textureIdsAndZ.y);
+    const float z = quad.textureIdsAndZ.z;
+    useColor = subTextureId == 0 ? 1 : 0;
+    quadColor = color;
 
     const vec2 vertPos = (vPos + 0.5f) * tileSize + tilePosition - mapCenterOffset;
     // gl_Position = vec4(vertPos * scale, 0, 1) / vec4(aspectRatio, 1, 1);

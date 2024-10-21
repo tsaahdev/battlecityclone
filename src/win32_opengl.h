@@ -20,28 +20,30 @@ enum class TextureId: u32 {
     TileSet,
 };
 enum class SpriteId: u32 {
-    Brick0 = 0,
-    Brick1 = 1,
-    Brick2 = 2,
-    Brick3 = 3,
-    Brick4 = 4,
-    Concrete = 5,
-    Water0 = 6,
-    Water1 = 7,
-    Water2 = 8,
-    Forest = 9,
-    Snow = 10,
-    Bird = 11,
-    Flag = 12,
+    None = 0,
 
-    Tank_0_Y_U_0 = 13,
-    Tank_0_Y_U_1 = 14,
-    Tank_0_Y_L_0 = 15,
-    Tank_0_Y_L_1 = 16,
-    Tank_0_Y_D_0 = 17,
-    Tank_0_Y_D_1 = 18,
-    Tank_0_Y_R_0 = 19,
-    Tank_0_Y_R_1 = 20,
+    Brick0,
+    Brick1,
+    Brick2,
+    Brick3,
+    Brick4,
+    Concrete,
+    Water0,
+    Water1,
+    Water2,
+    Forest,
+    Snow,
+    Bird,
+    Flag,
+
+    Tank_0_Y_U_0,
+    Tank_0_Y_U_1,
+    Tank_0_Y_L_0,
+    Tank_0_Y_L_1,
+    Tank_0_Y_D_0,
+    Tank_0_Y_D_1,
+    Tank_0_Y_R_0,
+    Tank_0_Y_R_1,
 
     Tank_1_Y_U_0,
     Tank_1_Y_U_1,
@@ -211,11 +213,11 @@ inline void bindTexture(SpriteId id) {
 struct QuadData {
     v2 tilePosition;
     v2 tileSize;
+    v4 color;
     TextureId texture{ 0 };
     SpriteId subTexture{ 0 };
-    f32 padding[2];
-    // v4 color;
-    // f32 z{ 0.0f };
+    f32 z{ 0.0f };
+    f32 _padding_;
 };
 std::vector<QuadData> quadData;
 
@@ -225,33 +227,16 @@ inline void wip_initQuadDataBufferObject() {
     glBufferData(GL_UNIFORM_BUFFER, sizeof(QuadData) * MAX_QUADS, nullptr, GL_STATIC_DRAW);
 }
 
-inline void pushQuad(v2 tilePosition, v2 tileSize, SpriteId id) {
-    quadData.emplace_back(QuadData{ tilePosition, tileSize, internal::subTextureMap[id].id, id });
-}
-
-struct Quad {
-    v2 pos{ 0.0f, 0.0f };
-    f32 size{ 1.0f };
-    TextureId textureId{ 0 };
-    SpriteId id{ 0 };
-};
-std::vector<Quad> quads;
-
-inline void pushQuad(SpriteId id, v2 position, f32 size = 1.0f) {
-    quads.emplace_back(Quad{ position, size, internal::subTextureMap[id].id, id });
+inline void pushQuad(v2 tilePosition, v2 tileSize, SpriteId id, v4 color = {}) {
+    quadData.emplace_back(QuadData{ tilePosition, tileSize, color, internal::subTextureMap[id].id, id });
 }
 
 u32 wip_vao{ 0 };
 u32 wip_vbo{ 0 };
-u32 wip_instanced_vbo{ 0 };
 u32 wip_program{ 0 };
 u32 wip_texture{ 0 };
 
 inline void prepareFrame() {
-    // glBindBuffer(GL_ARRAY_BUFFER, wip_instanced_vbo);
-    // glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(Quad) * static_cast<i32>(quads.size()), quads.data());
-    // glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     glBindBuffer(GL_UNIFORM_BUFFER, uniformQuadDataBlock);
     glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(QuadData) * static_cast<i32>(quadData.size()), quadData.data());
     glBindBufferBase(GL_UNIFORM_BUFFER, 1, uniformQuadDataBlock);
@@ -264,7 +249,6 @@ inline void beginFrame() {
     glUseProgram(wip_program);
     bindTexture(TextureId::TileSet);
 
-    // glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<i32>(quads.size()));
     glDrawArraysInstanced(GL_TRIANGLE_FAN, 0, 4, static_cast<i32>(quadData.size()));
 
     glUseProgram(0);
@@ -273,7 +257,6 @@ inline void beginFrame() {
 
 inline void endFrame() {
     ::SwapBuffers(internal::wglDC);
-    quads.clear();
     quadData.clear();
 }
 
@@ -316,18 +299,15 @@ inline b8 init(::HINSTANCE instance, ::HWND windowHandle, i32 width, i32 height)
         E_PRINT("OpenGL context version: %d.%d", majorVersion, minorVersion);
     #endif
 
-    if (!loadTexture("../assets/test_opaque.png", TextureId::TestOpaque)) { return false; }
-    
     if (!loadTilesetAtlas("../assets/tileset.png", TextureId::TileSet)) { return false; };
 
     // wglSwapIntervalEXT(0); // disable vsync
     wglSwapIntervalEXT(1); // enable vsync
 
     glViewport(0, 0, width, height);
-    
-
+    glClearColor(0.38671875f, 0.38671875f, 0.38671875f, 1.0f); // battle city gray
     // glClearColor(0.26f, 0.53f, 0.96f, 1.0f); // cornflower blue
-    glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black
+    // glClearColor(0.0f, 0.0f, 0.0f, 1.0f); // black
 
     wip_initQuadDataBufferObject();
 
@@ -367,7 +347,7 @@ inline b8 wip_test_init() {
 
 
 
-    
+
 
     glGenVertexArrays(1, &wip_vao);
     glBindVertexArray(wip_vao);
@@ -381,26 +361,8 @@ inline b8 wip_test_init() {
     glGenBuffers(1, &wip_vbo);
     glBindBuffer(GL_ARRAY_BUFFER, wip_vbo);
     glBufferData(GL_ARRAY_BUFFER, sizeof(v2) * 4, quad, GL_STATIC_DRAW);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(f32), nullptr);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(v2), nullptr);
     glEnableVertexAttribArray(0);
-
-
-    glGenBuffers(1, &wip_instanced_vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, wip_instanced_vbo);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(Quad) * MAX_QUADS, nullptr, GL_STATIC_DRAW);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 20, reinterpret_cast<void*>(0));
-    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 20, reinterpret_cast<void*>(8));
-    glVertexAttribIPointer(3, 1, GL_UNSIGNED_INT, 20, reinterpret_cast<void*>(12));
-    glVertexAttribIPointer(4, 1, GL_UNSIGNED_INT, 20, reinterpret_cast<void*>(16));
-    glEnableVertexAttribArray(1);
-    glEnableVertexAttribArray(2);
-    glEnableVertexAttribArray(3);
-    glEnableVertexAttribArray(4);
-    glVertexAttribDivisor(1, 1);
-    glVertexAttribDivisor(2, 1);
-    glVertexAttribDivisor(3, 1);
-    glVertexAttribDivisor(4, 1);
-
 
     const auto vertexShaderId = glCreateShader(GL_VERTEX_SHADER);
     {
@@ -470,7 +432,6 @@ inline b8 wip_test_init() {
     glUniformBlockBinding(wip_program, uniformTextureBlockIndex, 0);
     glBindBuffer(GL_UNIFORM_BUFFER, uniformTextureBlock);
     glBindBufferBase(GL_UNIFORM_BUFFER, 0, uniformTextureBlock);
-
 
     glUniform1i(glGetUniformLocation(wip_program, "texture0"), 0);
     return true;

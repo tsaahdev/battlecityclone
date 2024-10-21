@@ -1,6 +1,8 @@
 #version 460 core
 
 in vec2 texCoord;
+in flat int useColor;
+in vec4 quadColor;
 
 out vec4 FragColor;
 
@@ -11,10 +13,13 @@ float average(vec3 color) {
 }
 
 void main() {
-    // FragColor = vec4(1, 0, 1, 1);
-    vec4 color = texture(texture0, texCoord);
-    if (average(color.rgb) < 1 / 255.0f) {
-        discard;
+    if (useColor == 1) {
+        FragColor = quadColor;
+    } else {
+        vec4 color = texture(texture0, texCoord);
+        if (average(color.rgb) < 1 / 255.0f) {
+            discard;
+        }
+        FragColor = color;
     }
-    FragColor = color;
 }
