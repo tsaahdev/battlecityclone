@@ -211,13 +211,11 @@ inline void bindTexture(SpriteId id) {
 }
 
 struct QuadData {
-    v2 tilePosition;
-    v2 tileSize;
+    v4 tilePosition;
     v4 color;
+    v2 tileSize;
     TextureId texture{ 0 };
     SpriteId subTexture{ 0 };
-    f32 z{ 0.0f };
-    f32 _padding_;
 };
 std::vector<QuadData> quadData;
 
@@ -227,8 +225,8 @@ inline void wip_initQuadDataBufferObject() {
     glBufferData(GL_UNIFORM_BUFFER, sizeof(QuadData) * MAX_QUADS, nullptr, GL_STATIC_DRAW);
 }
 
-inline void pushQuad(v2 tilePosition, v2 tileSize, SpriteId id, v4 color = {}) {
-    quadData.emplace_back(QuadData{ tilePosition, tileSize, color, internal::subTextureMap[id].id, id });
+inline void pushQuad(v4 tilePosition, v2 tileSize, SpriteId id, v4 color = {}) {
+    quadData.emplace_back(QuadData{ tilePosition, color, tileSize, internal::subTextureMap[id].id, id });
 }
 
 u32 wip_vao{ 0 };

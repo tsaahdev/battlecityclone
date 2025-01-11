@@ -9,9 +9,9 @@ layout (std140, binding = 0) uniform Textures {
 
 const int MAX_QUADS = 1024; // TODO:  refactor
 struct QuadData {
-    vec4 tilePositionAndSize;
+    vec4 tilePosition;
     vec4 color;
-    vec4 textureIdsAndZ;
+    vec4 tileSizeAndTextureIds;
 };
 layout (std140, binding = 1) uniform QuadDataBlock {
     QuadData quadData[MAX_QUADS];
@@ -45,12 +45,11 @@ void main() {
     // vec2 aspectRatio = vec2(width, height) / float(height);
 
     const QuadData quad = quadData[gl_InstanceID];
-    const vec2 tilePosition = quad.tilePositionAndSize.xy;
-    const vec2 tileSize = quad.tilePositionAndSize.zw;
+    const vec2 tilePosition = quad.tilePosition.xy;
+    const vec2 tileSize = quad.tileSizeAndTextureIds.xy;
     const vec4 color = quad.color;
-    const uint textureId = floatBitsToUint(quad.textureIdsAndZ.x);
-    const uint subTextureId = floatBitsToUint(quad.textureIdsAndZ.y);
-    const float z = quad.textureIdsAndZ.z;
+    const uint textureId = floatBitsToUint(quad.tileSizeAndTextureIds.z);
+    const uint subTextureId = floatBitsToUint(quad.tileSizeAndTextureIds.w);
     useColor = subTextureId == 0 ? 1 : 0;
     quadColor = color;
 

@@ -34,9 +34,9 @@ union Vector2 {
     T data[2];
 
     Vector2()
-        : x{ static_cast<T>(0) }, y{ static_cast<T>(0) }{}
+        : x{}, y{}{}
     template <class V>
-    Vector2(V v = static_cast<T>(0))
+    Vector2(V v = {})
         : x{ static_cast<T>(v) }, y{ static_cast<T>(v) }{}
     template <class X, class Y>
     Vector2(X x, Y y)
@@ -65,11 +65,20 @@ union Vector2 {
         y += rhs.y;
         return *this;
     }
+
+    Vector2& operator+(const Vector2<T>& rhs) {
+        return { x + rhs.x, y  + rhs.y };
+    }
 };
 
 template <class T>
 Vector2<T> operator*(const Vector2<T>& l, f32 r) {
     return { l.x * r, l.y * r };
+}
+
+template <class T>
+Vector2<T> operator*(f32 l, const Vector2<T>& r) {
+    return r * l;
 }
 
 using v2 = Vector2<f32>;
@@ -90,18 +99,18 @@ union Vector3 {
     T data[3];
 
     Vector3()
-        : x{ static_cast<T>(0) }, y{ static_cast<T>(0) }, z{ static_cast<T>(0) }{}
+        : x{}, y{}, z{}{}
     template <class V>
     Vector3(V v)
         : x{ static_cast<T>(v) }, y{ static_cast<T>(v) }, z{ static_cast<T>(v) }{}
     template <class X, class Y, class Z>
-    Vector3(X ax, Y ay, Z az = static_cast<T>(0))
+    Vector3(X ax, Y ay, Z az = {})
         : x{ static_cast<T>(ax) }, y{ static_cast<T>(ay) }, z{ static_cast<T>(az) }{}
     template <class V, class Z>
-    Vector3(const Vector2<V>& v, Z az = static_cast<T>(0))
+    Vector3(const Vector2<V>& v, Z az = {})
         : x{ static_cast<T>(v.x) }, y{ static_cast<T>(v.y) }, z{ static_cast<T>(az) }{}
     template <class V, class Z>
-    Vector3(Vector2<V>&& v, Z az = static_cast<T>(0))
+    Vector3(Vector2<V>&& v, Z az = {})
         : x{ static_cast<T>(v.x) }, y{ static_cast<T>(v.y) }, z{ static_cast<T>(az) }{}
     template <class V>
     Vector3(const Vector3<V>& v)
@@ -112,11 +121,11 @@ union Vector3 {
 
     template <class V>
     Vector3& operator=(const Vector2<V>& v) {
-        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = static_cast<T>(0);
+        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = {};
     }
     template <class V>
     Vector3& operator=(Vector2<V>&& v) {
-        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = static_cast<T>(0);
+        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = {};
     }
     template <class V>
     Vector3& operator=(const Vector3<V>& v) {
@@ -147,47 +156,47 @@ union Vector4 {
     T data[4];
 
     Vector4()
-        : x{ static_cast<T>(0) }, y{ static_cast<T>(0) }, z{ static_cast<T>(0)}, w{ static_cast<T>(0) }{}
+        : x{}, y{}, z{}, w{}{}
     template <class V>
     Vector4(V v)
         : x{ static_cast<T>(v) }, y{ static_cast<T>(v) }, z{ static_cast<T>(v)}, w{ static_cast<T>(v) }{}
     template <class X, class Y, class Z, class W>
-    Vector4(X ax, Y ay, Z az = static_cast<T>(0), W aw = static_cast<T>(0))
+    Vector4(X ax, Y ay, Z az = {}, W aw = {})
         : x{ static_cast<T>(ax) }, y{ static_cast<T>(ay) }, z{ static_cast<T>(az) }, w{ static_cast<T>(aw) }{}
     template <class V, class Z, class W>
-    Vector4(const Vector2<V>& v, Z az = static_cast<T>(0), W aw = static_cast<T>(0))
+    Vector4(const Vector2<V>& v, Z az = {}, W aw = {})
         : x{ static_cast<T>(v.x) }, y{ static_cast<T>(v.y) }, z{ static_cast<T>(az) }, w{ static_cast<T>(aw) }{}
     template <class V, class Z, class W>
-    Vector4(Vector2<V>&& v, Z az = static_cast<T>(0), W aw = static_cast<T>(0))
+    Vector4(Vector2<V>&& v, Z az = {}, W aw = {})
         : x{ static_cast<T>(v.x) }, y{ static_cast<T>(v.y) }, z{ static_cast<T>(az) }, w{ static_cast<T>(aw) }{}
     template <class V, class W>
-    Vector4(const Vector3<V>& v, W aw = static_cast<T>(0))
+    Vector4(const Vector3<V>& v, W aw = {})
         : x{ static_cast<T>(v.x) }, y{ static_cast<T>(v.y) }, z{ static_cast<T>(v.z) }, w{ static_cast<T>(aw) }{}
     template <class V, class W>
-    Vector4(Vector2<V>&& v, W aw = static_cast<T>(0))
+    Vector4(Vector3<V>&& v, W aw = {})
         : x{ static_cast<T>(v.x) }, y{ static_cast<T>(v.y) }, z{ static_cast<T>(v.z) }, w{ static_cast<T>(aw) }{}
     template <class V>
-    Vector4(const Vector3<V>& v)
+    Vector4(const Vector4<V>& v)
         : x{ static_cast<T>(v.x) }, y{ static_cast<T>(v.y) }, z{ static_cast<T>(v.z) }, w{ static_cast<T>(v.w) }{}
     template <class V>
-    Vector4(Vector2<V>&& v)
+    Vector4(Vector4<V>&& v)
         : x{ static_cast<T>(v.x) }, y{ static_cast<T>(v.y) }, z{ static_cast<T>(v.z) }, w{ static_cast<T>(v.w) }{}
 
     template <class V>
     Vector4& operator=(const Vector2<V>& v) {
-        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = static_cast<T>(0); w = static_cast<T>(0);
+        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = {}; w = {};
     }
     template <class V>
     Vector4& operator=(Vector2<V>&& v) {
-        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = static_cast<T>(0); w = static_cast<T>(0);
+        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = {}; w = {};
     }
     template <class V>
     Vector4& operator=(const Vector3<V>& v) {
-        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = static_cast<T>(v.z); w = static_cast<T>(0);
+        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = static_cast<T>(v.z); w = {};
     }
     template <class V>
     Vector4& operator=(Vector3<V>&& v) {
-        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = static_cast<T>(v.z); w = static_cast<T>(0);
+        x = static_cast<T>(v.x); y = static_cast<T>(v.y); z = static_cast<T>(v.z); w = {};
     }
     template <class V>
     Vector4& operator=(const Vector4<V>& v) {

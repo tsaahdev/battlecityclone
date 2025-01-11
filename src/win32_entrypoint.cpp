@@ -75,8 +75,8 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
     i64 lastCounter{ 0 };
     ::QueryPerformanceCounter(reinterpret_cast<::LARGE_INTEGER*>(&lastCounter));
 
-    game::createMap0();
-    game::createPlayer1();
+    game::init();
+    
 
     running = true;
     while (running) {
@@ -112,12 +112,7 @@ i32 WINAPI WinMain(::HINSTANCE hInstance, ::HINSTANCE hPrevInstance, c8* lpCmdLi
         f32 dt = (now - lastCounter) / static_cast<f32>(perfFreq);
         lastCounter = now;
 
-        // game::update(map, dt);
-        game::updatePlayer1Input();
-        ecs::inputSystem();
-        ecs::moveSystem(dt);
-        ecs::animationSystem(dt);
-        ecs::renderSystem();
+        game::update(dt);
 
         opengl::prepareFrame();
         opengl::beginFrame();
