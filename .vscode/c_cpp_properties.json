@@ -6,7 +6,8 @@
                 "${workspaceFolder}/src/**"
             ],
             "defines": [
-                "E_DEBUG_BUILD"
+                "E_DEBUG_BUILD",
+                "NOMINMAX"
             ],
             "compilerPath": "cl.exe",
             "cppStandard": "c++20",

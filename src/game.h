@@ -4,6 +4,9 @@
 #include "win32_opengl.h"
 #include "ecs.h"
 
+#include "e_texture_manager.h"
+#include "e_myson_parser.h"
+
 namespace base::game {
 
 ecs::Ecs ecs;
@@ -119,7 +122,7 @@ inline void createPlayer1() {
     ecs.addComponent<Sprite>(entityId, {
         .spriteId = opengl::SpriteId::Tank_0_Y_U_0
     });
-     ecs.addComponent<Physics>(entityId, {
+    ecs.addComponent<Physics>(entityId, {
         .velocity = { 0, 0 },
         .acceleration = { 0, 0 }
     });
@@ -148,6 +151,8 @@ inline void createPlayer1() {
 //     player1input->start = (::GetAsyncKeyState(VK_RETURN) & 0x8000) == 0x8000;
 // }
 void init() {
+    const auto result = loadTileSet("assets/tileset.myson");
+    
     createMap0();
     createPlayer1();
 }

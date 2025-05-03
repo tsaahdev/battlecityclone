@@ -3,7 +3,7 @@
 MKDIR build > nul
 PUSHD build
 @REM /Gs99999999 /guard:cf-
-SET COMMON_COMPILE_FLAGS=/nologo /Gr /GR- /GS- /GF /Gy /fp:fast /fp:except- /EHa- /EHc- /EHs- /std:c++latest /diagnostics:caret /MP /utf-8 /W4 /WX
+SET COMMON_COMPILE_FLAGS=/nologo /Gr /GS- /GF /Gy /fp:fast /fp:except- /EHa- /EHc- /EHs- /std:c++latest /diagnostics:caret /MP /utf-8 /W4 /WX
 SET COMMON_DEFINES=/UUNICODE /U_UNICODE /D_CRT_SECURE_NO_WARNINGS /D_CRT_NONSTDC_NO_WARNINGS /DWIN32_LEAN_AND_MEAN /DNOMINMAX /DVC_EXTRALEAN
 SET COMMON_LINK_FLAGS=/OPT:REF /OPT:ICF /INCREMENTAL:NO
 SET COMMON_DISABLED_WARNINGS=/wd4100 /wd4189 /wd4702 /wd4805 /wd4127 /wd4700 /wd4201 /wd4530
@@ -17,5 +17,7 @@ cl ../src/win32_entrypoint.cpp %COMMON_COMPILE_FLAGS% %DEBUG_COMPILE_FLAGS% %COM
 
 MKDIR shaders > nul
 COPY "..\src\shaders" "shaders" /Y
+MKDIR assets > nul
+COPY "..\assets" "assets" /Y
 
 POPD
