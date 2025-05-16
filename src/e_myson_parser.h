@@ -8,37 +8,7 @@
 
 namespace base::myson {
 
-// WTH am i doing?
-
-
-// struct StringView {
-//     u8* pointer{ nullptr };
-//     size_t size{ 0 };
-//     bool operator==(const StringView& other) const { return other.pointer == pointer && other.size == size; }
-    
-// };
-// }
-
-// namespace std {
-//     template<>
-//     struct hash<base::myson::StringView> {
-//         size_t operator()(const base::myson::StringView& view) const {
-//             return std::hash<size_t>{}(reinterpret_cast<size_t>(view.pointer)) ^ std::hash<size_t>{}(view.size);
-//         }
-//     };
-// }
-
-
-// namespace base::myson {
-struct Array;
-struct Object;
 struct Value {
-    virtual ~Value() = default;
-    enum Type: u8 {
-        T_Value,
-        T_Object,
-        T_Array
-    } type{ T_Value };
     StringView view;
     String toString() const { return view.toString(); }
     u32 toU32() const { return std::stoul(reinterpret_cast<const char*>(view.data())); }
@@ -48,38 +18,9 @@ struct Value {
     f32 toF32() const { return std::stof(reinterpret_cast<const char*>(view.data())); }
     f64 toF64() const { return std::stod(reinterpret_cast<const char*>(view.data())); }
     b8 toBool() const { return view[0] == 't'; }
-    Object toObject() const;
-    Array toArray() const;
-};
-struct Array: public Value {
-    Array(): Value() {}
     std::vector<Value> values;
+    std::unordered_map<std::string, Value> keyValues;
 };
-struct Object: public Value {
-    Object(): Value() {}
-    std::unordered_map<std::string, Value> values;
-};
-
-Array Value::toArray() const { return type == T_Array ? *dynamic_cast<const Array*>(this) : Array{}; }
-Object Value::toObject() const { return type == T_Object ? *dynamic_cast<const Object*>(this) : Object{}; }
-
-// String toString(const Value& value) { return {}; }
-// u32 toU32(const Value& value) { return 0; }
-// u64 toU64(const Value& value) { return 0; }
-// b8 toBool(const Value& value) { return false; }
-// Array toArray(const Value& value) { return {}; }
-// Array toObject(const Value& value) { return {}; }
-
-// size_t size(const Array& array) { return array.values.size(); }
-// const Value& at(const Array& array, size_t index) { return array.values.at(index); }
-
-// const Value& value(const Object& object, const String& key) { return object.values.at(key); }
-// b8 contains(const Object& object, const String& key) { return object.values.contains(key); }
-
-// looks like i want to write a parser
-// do i need a reel tokenizer here?
-
-// KEY, LCB, RCB, LSB, RSB, COLON, COMMA, STRING, NUMBER, BOOL, EOF
 
 struct Token {
     enum Type: u8 {
@@ -115,8 +56,6 @@ Token nextToken(const StringView& view, size_t& pos) {
         token.type = Token::END;
         return token;
     }
-    // token.view.pointer = &view.pointer[pos];
-    // token.view.size = 1;
 
     auto tokenStart = pos;
 
@@ -131,13 +70,11 @@ Token nextToken(const StringView& view, size_t& pos) {
         case '\'': {
             ++pos;
             ++tokenStart;
-            // token.view.pointer = &view.pointer[pos];
             while (view[pos] != '\'') {
                 if (view[pos] == '\\') { ++pos; }
                 if (view[pos] == '\0') { token.type = Token::INVALID; return token; }
                 ++pos;
             }
-            // token.view.size = &view.pointer[pos] - token.view.pointer;
             token.view = view.substr(tokenStart, pos - tokenStart);
             token.type = Token::STRING;
             ++pos;
@@ -165,13 +102,11 @@ Token nextToken(const StringView& view, size_t& pos) {
                 if (view[pos] == '+' || view[pos] == '-') { ++pos; }
                 while (isdigit(view[pos])) { ++pos; }
             }
-            // token.view.size = &view.pointer[pos] - token.view.pointer;
             token.type = Token::NUMBER;
             token.view = view.substr(tokenStart, pos - tokenStart);
         } break;
 
         case 't': {
-            // if (e_strncmp(&view.pointer[pos], "true", 4) == 0) {
             if (e_strncmp(view.data() + pos, "true", 4) == 0) {
                 token.type = Token::BOOL;
                 token.view = view.substr(tokenStart, 4);
@@ -199,7 +134,6 @@ Token nextToken(const StringView& view, size_t& pos) {
             while (!isspace(view[pos]) && view[pos] != ':') { ++pos; }
             token.type = Token::KEY;
             token.view = view.substr(tokenStart, pos - tokenStart);
-            // token.view.size = &view.pointer[pos] - token.view.pointer;
         }
     }
     return token;
@@ -207,11 +141,8 @@ Token nextToken(const StringView& view, size_t& pos) {
 
 Value parseValue(Token token, const StringView& view, size_t& pos);
 
-Object parseObject(const StringView& view, size_t& pos) {
-    Object object;
-    object.type = Value::T_Object;
-    // object.pointer = view.pointer;
-    // object.size = view.size;
+Value parseObject(const StringView& view, size_t& pos) {
+    Value object;
     Token currentToken = nextToken(view, pos);
     while (currentToken.type != Token::RCB) {
         if (currentToken.type != Token::KEY) {
@@ -227,7 +158,7 @@ Object parseObject(const StringView& view, size_t& pos) {
         currentToken = nextToken(view, pos);
         Value value = parseValue(currentToken, view, pos);
 
-        object.values.insert({ key.toStdString(), value });
+        object.keyValues.insert({ key.toStdString(), value });
 
         currentToken = nextToken(view, pos);
 
@@ -238,15 +169,11 @@ Object parseObject(const StringView& view, size_t& pos) {
             return {};
         }
     }
-    // currentToken = nextToken(view, pos);
     return object;
 }
 
-Array parseArray(const StringView& view, size_t& pos) {
-    Array array;
-    array.type = Value::T_Array;
-    // array.pointer = view.pointer;
-    // array.size = view.size;
+Value parseArray(const StringView& view, size_t& pos) {
+    Value array;
     Token currentToken = nextToken(view, pos);
     while (currentToken.type != Token::RSB) {
         Value value = parseValue(currentToken, view, pos);
@@ -259,7 +186,6 @@ Array parseArray(const StringView& view, size_t& pos) {
             return {};
         }
     }
-    // currentToken = nextToken(view, pos);
     return array;
 }
 
@@ -273,15 +199,8 @@ Value parseValue(Token token, const StringView& view, size_t& pos) {
         case Token::NUL: {
             Value value;
             value.view = token.view;
-            // E_PRINT("parsed value %s", value.view.toStdString().c_str());
-            // pos += token.view.size();
             return value;
         };
-
-        // case Token::STRING: return parseString();
-        // case Token::NUMBER: return parseNumber();
-        // case Token::BOOL: return parseBool();
-        // case Token::NUL: return parseNull();
         default:
             E_PRINT("unexpected token");
             return {};
@@ -289,13 +208,10 @@ Value parseValue(Token token, const StringView& view, size_t& pos) {
     return {};
 }
 
-Object parseDocument(const StringView& view) {
+Value parseDocument(const StringView& view) {
     size_t pos = 0;
     Token currentToken = nextToken(view, pos);
-    Object object;
-    object.type = Value::T_Object;
-    // object.pointer = view.pointer;
-    // object.size = view.size;
+    Value object;
     while (currentToken.type != Token::END) {
         if (currentToken.type != Token::KEY) {
             E_PRINT("failed to find a key in your myson file");
@@ -310,7 +226,7 @@ Object parseDocument(const StringView& view) {
         currentToken = nextToken(view, pos);
         Value value = parseValue(currentToken, view, pos);
 
-        object.values.insert({ key.toStdString(), value });
+        object.keyValues.insert({ key.toStdString(), value });
 
         currentToken = nextToken(view, pos);
 
@@ -323,8 +239,5 @@ Object parseDocument(const StringView& view) {
     }
     return object;
 }
-
-
-
 
 } // namespace base::myson

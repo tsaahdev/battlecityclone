@@ -94,19 +94,48 @@ b8 loadTileSet(const char* filepath) {
 
     StringView view(data, size);
     const auto doc = myson::parseDocument(view);
-    const auto version = doc.values.at("version").toU32();
-    const auto sprites = doc.values.at("sprites").toObject();
-    const auto map_tiles = sprites.values.at("map_tiles").toArray();
+    const auto version = doc.keyValues.at("version").toU32();
+    const auto sprites = doc.keyValues.at("sprites");
+    
+    const auto map_tiles = sprites.keyValues.at("map_tiles");
     for (const auto& tile: map_tiles.values) {
-        const auto tileObject = tile.toObject();
-        const auto tagsArray = tileObject.values.at("tags").toArray();
+        const auto tileObject = tile;
+        const auto tagsArray = tileObject.keyValues.at("tags");
         for (const auto& tag: tagsArray.values) {
             const auto tagString = tag.toString();
             E_PRINT("TAG %s", tagString.toStdString().c_str());
         }
     }
 
-    
+    const auto animations = sprites.keyValues.at("animations");
+    for (const auto& tile: animations.values) {
+        const auto tileObject = tile;
+        const auto tagsArray = tileObject.keyValues.at("tags");
+        for (const auto& tag: tagsArray.values) {
+            const auto tagString = tag.toString();
+            E_PRINT("TAG %s", tagString.toStdString().c_str());
+        }
+    }
+
+    const auto pickups = sprites.keyValues.at("pickups");
+    for (const auto& tile: pickups.values) {
+        const auto tileObject = tile;
+        const auto tagsArray = tileObject.keyValues.at("tags");
+        for (const auto& tag: tagsArray.values) {
+            const auto tagString = tag.toString();
+            E_PRINT("TAG %s", tagString.toStdString().c_str());
+        }
+    }
+
+    const auto tanks = sprites.keyValues.at("tanks");
+    for (const auto& tile: tanks.values) {
+        const auto tileObject = tile;
+        const auto tagsArray = tileObject.keyValues.at("tags");
+        for (const auto& tag: tagsArray.values) {
+            const auto tagString = tag.toString();
+            E_PRINT("TAG %s", tagString.toStdString().c_str());
+        }
+    }
 
 
     return true;

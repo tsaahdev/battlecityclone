@@ -10,7 +10,8 @@
             "request": "launch",
             "program": "${workspaceFolder}/build/battlecity_debug.exe",
             "cwd": "${workspaceFolder}/build",
-            "console": "integratedTerminal"
+            "console": "integratedTerminal",
+            "visualizerFile": "${workspaceFolder}/../STL.natvis"
         }
     ]
 }
