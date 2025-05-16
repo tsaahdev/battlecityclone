@@ -13,8 +13,27 @@
 
 namespace base {
 
+struct Texture {
+    u32 textureId{ 0 };
+    v2i size;
+};
+
+struct Subtexture {
+    f32 x{ 0 };
+    f32 y{ 0 };
+    f32 w{ 0 };
+    f32 h{ 0 };
+};
+
 struct TextureManager {
-    
+    std::vector<u32> textureList; // ogl texture id list
+    // frame list // list of frames (descriptions of a subtextures)
+    // map<SpriteType, ?> 
+    //
+
+    // SpriteId getSprite(SpriteType type, SpriteTags tag, u8 frameNumber = 0) const {
+
+    // }
 };
 
 // b8 loadImageFile(const char* filepath) {
@@ -67,13 +86,8 @@ enum class SpriteTag: u8 {
     TYPE_6,
     TYPE_7,
 };
-
-struct Frame {
-    u32 x{ 0 };
-    u32 y{ 0 };
-    u32 w{ 0 };
-    u32 h{ 0 };
-};
+struct Frame {};
+std::vector<Frame> frames;
 
 struct Sprite {
     std::vector<Frame> frames;

@@ -93,6 +93,7 @@ static void (__stdcall* glDrawArrays)(u32, i32, i32){ nullptr };
 static void (__stdcall* glGenTextures)(i32, u32*){ nullptr };
 static void (__stdcall* glBindTexture)(u32, u32){ nullptr };
 static void (__stdcall* glTexImage2D)(u32, i32, i32, i32, i32, i32, u32, u32, const void*){ nullptr };
+static void (__stdcall* glDeleteTextures)(u32, const u32*){ nullptr };
 static void (__stdcall* glGenerateMipmap)(u32){ nullptr };
 static void (__stdcall* glTexParameteri)(u32, u32, i32){ nullptr };
 static i32 (__stdcall* glGetUniformLocation)(u32, const c8*){ nullptr };

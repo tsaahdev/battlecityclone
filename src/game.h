@@ -188,8 +188,9 @@ void update(f32 dt) {
     ecs::System<Transform, ColoredQuad>::update(ecs, [&](Transform& transform, ColoredQuad& coloredQuad){
         opengl::pushQuad(transform.position, transform.size, opengl::SpriteId::None, coloredQuad.color);
     });
-
+    
     ecs::System<Transform, Sprite>::update(ecs, [&](Transform& transform, Sprite& sprite){
+        // opengl::pushQuad(transform.position, transform.size, spriteWithTypeAndTagAndFrame, tintColor);
         opengl::pushQuad(transform.position, transform.size, sprite.spriteId);
     });
 }

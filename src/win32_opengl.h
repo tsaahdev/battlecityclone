@@ -3,6 +3,7 @@
 #include "common.h"
 
 #include "win32_opengl_defines.h"
+#include "opengl/texture2d.h"
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
@@ -121,35 +122,15 @@ u32 uniformQuadDataBlock{ 0 }; // TODO: refactor where to store this
 
 // TODO: refactor also theese functions where they should be stored
 inline b8 loadTexture(const c8* filename, TextureId id) {
-    u32 textureId{ 0 };
-    glGenTextures(1, &textureId);
-    glBindTexture(GL_TEXTURE_2D, textureId);
-
     i32 x, y, n;
     u8* data = stbi_load(filename, &x, &y, &n, 0); // TODO: read stbi: how to use own memory allocation
-    if (!data) {
-        E_PRINT("Failed to load texture: %s", filename);
-        return false;
-    }
-    if (n == 3) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, x, y, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-    } else if (n == 4) {
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, x, y, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-    } else {
-        E_PRINT("Unsupported number of channels: %d", n);
-        stbi_image_free(data);
-        return false;
-    }
+
+    Texture2D texture;
+    texture.create(x, y, n, data);
+
     stbi_image_free(data);
+    internal::textureMap[id] = texture.id;
 
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    internal::textureMap[id] = textureId;
     return true;
 }
 

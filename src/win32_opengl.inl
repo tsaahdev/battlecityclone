@@ -437,6 +437,7 @@ inline b8 loadOpenGlFunctions() {
     result |= E_LOAD_FUNCTION(glGenTextures);
     result |= E_LOAD_FUNCTION(glBindTexture);
     result |= E_LOAD_FUNCTION(glTexImage2D);
+    result |= E_LOAD_FUNCTION(glDeleteTextures);
     result |= E_LOAD_FUNCTION(glGenerateMipmap);
     result |= E_LOAD_FUNCTION(glTexParameteri);
     result |= E_LOAD_FUNCTION(glGetUniformLocation);
